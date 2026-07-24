@@ -1,0 +1,50 @@
+{
+  "name": "n8n-nodes-nukeapi",
+  "version": "1.0.0",
+  "description": "n8n community node for NukeAPI — GDPR/CCPA/LGPD user-deletion API. Delete a user across 78+ SaaS tools with one call and get a signed audit trail.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "n8n": {
+    "nodes": [
+      "dist/nodes/NukeAPI/NukeAPI.node.js"
+    ],
+    "credentials": [
+      "dist/credentials/NukeApiApi.credentials.js"
+    ]
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lakhu-studio/nukeapi.git"
+  },
+  "homepage": "https://nukeapi.com",
+  "bugs": {
+    "url": "https://github.com/lakhu-studio/nukeapi/issues"
+  },
+  "keywords": [
+    "n8n",
+    "n8n-community-node",
+    "gdpr",
+    "user-deletion",
+    "nukeapi"
+  ],
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').copyFileSync('nodes/NukeAPI/nukeapi.svg','dist/nodes/NukeAPI/nukeapi.svg')\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "n8n-workflow": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

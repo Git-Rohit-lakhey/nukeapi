@@ -1,0 +1,51 @@
+{
+  "name": "@nukeapi/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript SDK for NukeAPI — GDPR/CCPA/LGPD user-deletion API.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nukeapi/nukeapi.git"
+  },
+  "homepage": "https://github.com/nukeapi/nukeapi#readme",
+  "bugs": {
+    "url": "https://github.com/nukeapi/nukeapi/issues"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "nukeapi",
+    "gdpr",
+    "ccpa",
+    "lgpd",
+    "user-deletion",
+    "right-to-erasure",
+    "privacy",
+    "compliance"
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
