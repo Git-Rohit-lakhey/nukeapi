@@ -10,11 +10,14 @@ export async function GET(req: NextRequest) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
 
+  // Prevent open redirect: only allow relative paths starting with /
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+
   if (code) {
     const supabase = await getSupabaseServer();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(`${origin}${safeNext}`);
     }
   }
   return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`);

@@ -110,9 +110,11 @@ export interface UsageInfo {
   remaining: number;
   /** USD per deletion beyond `limit`; present on paid plans. */
   overageRate?: number;
+  /** Amount already charged for overage this period. */
+  overageCharged?: number;
 }
 
-export type DeletionStatus = "completed" | "partial" | "failed";
+export type DeletionStatus = "pending" | "completed" | "partial" | "failed";
 
 /** Request body for `POST /api/v1/delete-user`. */
 export interface DeleteUserRequest {

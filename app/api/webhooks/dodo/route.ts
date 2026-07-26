@@ -105,7 +105,14 @@ export async function POST(req: NextRequest) {
   }
 
   const status = mapStatus(data.status ?? data.subscription_status);
-  const plan = planSlugFromProductId(productId) ?? "startup";
+  const plan = planSlugFromProductId(productId);
+  if (!plan) {
+    console.error("[dodo webhook] unknown product_id:", productId);
+    return NextResponse.json(
+      { success: false, error: { code: "UNKNOWN_PRODUCT", message: `No plan mapping for product: ${productId}` } },
+      { status: 500 }, // let Dodo retry — unknown product may need env config
+    );
+  }
   const nowIso = new Date().toISOString();
 
   // 6.2 / 6.5 — upsert the subscription. We CHECK and surface the error so a

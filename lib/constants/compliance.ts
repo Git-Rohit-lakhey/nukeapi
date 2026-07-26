@@ -43,7 +43,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     // Free keeps a fixed 3 — must match the homepage code example so a free
     // user's first copy-pasted call succeeds.
     maxIntegrations: 3,
-    allowedIntegrations: ["mailchimp", "hubspot", "intercom"],
+    allowedIntegrations: ["stripe", "mailchimp", "hubspot"],
     billing: "free",
   },
   startup: {

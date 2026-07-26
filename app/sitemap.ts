@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/lib/blog";
 
-const BASE = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const BASE = process.env.NEXT_PUBLIC_APP_URL;
+if (!BASE) {
+  console.warn("[sitemap] NEXT_PUBLIC_APP_URL not set — sitemap will use relative URLs.");
+}
 
 const STATIC_ROUTES: { path: string; priority: number; change: "daily" | "weekly" | "monthly" }[] = [
   { path: "", priority: 1, change: "weekly" },
@@ -19,14 +22,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({
-    url: `${BASE}${r.path}`,
+    url: BASE ? `${BASE}${r.path}` : r.path,
     lastModified: now,
     changeFrequency: r.change,
     priority: r.priority,
   }));
 
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((p) => ({
-    url: `${BASE}/blog/${p.slug}`,
+    url: BASE ? `${BASE}/blog/${p.slug}` : `/blog/${p.slug}`,
     lastModified: new Date(p.date),
     changeFrequency: "monthly",
     priority: 0.6,

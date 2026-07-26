@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-const BASE = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const BASE = process.env.NEXT_PUBLIC_APP_URL;
+const HOST = BASE || undefined;
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -22,7 +23,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: `${BASE}/sitemap.xml`,
-    host: BASE,
+    sitemap: BASE ? `${BASE}/sitemap.xml` : undefined,
+    host: HOST,
   };
 }

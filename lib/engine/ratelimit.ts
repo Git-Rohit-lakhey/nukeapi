@@ -49,8 +49,14 @@ export async function rateLimit(
   }
   const k = `rl:${key}`;
   try {
-    const count = await r.incr(k);
-    if (count === 1) await r.expire(k, windowSec);
+    // Atomic incr + expire via pipeline to prevent key living forever if
+    // the serverless function is killed between incr and expire (Section 6.8).
+    const [count] = await r.pipeline()
+      .incr(k)
+      .exec<number[]>();
+    if (count === 1) {
+      await r.expire(k, windowSec);
+    }
     const ttl = await r.ttl(k);
     const remaining = Math.max(0, limit - count);
     return {

@@ -15,6 +15,9 @@ const mono = JetBrains_Mono({
 });
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+if (!process.env.NEXT_PUBLIC_APP_URL) {
+  console.warn("[layout] NEXT_PUBLIC_APP_URL not set — metadata will default to localhost.");
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),

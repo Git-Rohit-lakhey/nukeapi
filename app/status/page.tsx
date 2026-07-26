@@ -85,8 +85,10 @@ export default function StatusPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 20 }}>
           <div className="card" style={{ padding: "16px 20px" }}>
             <div style={{ fontSize: 11, color: "var(--lime)", letterSpacing: ".1em", marginBottom: 8 }}>UPTIME</div>
-            <div style={{ fontSize: 32, fontWeight: 900, color: "var(--emerald)", letterSpacing: "-.03em" }}>99.9%</div>
-            <div style={{ fontSize: 12, color: "var(--t2)", marginTop: 4 }}>30-day rolling target</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: status === "operational" ? "var(--emerald)" : "var(--rose)", letterSpacing: "-.03em" }}>
+              {status === "loading" ? "…" : status === "operational" ? "ONLINE" : "OFFLINE"}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--t2)", marginTop: 4 }}>Live health status</div>
           </div>
           <div className="card" style={{ padding: "16px 20px" }}>
             <div style={{ fontSize: 11, color: "var(--lime)", letterSpacing: ".1em", marginBottom: 8 }}>RESPONSE TIME</div>

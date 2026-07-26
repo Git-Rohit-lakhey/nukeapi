@@ -52,7 +52,13 @@ async function defaultLoadCredentials(
   try {
     return decryptJSON<Record<string, string>>(data.credentials);
   } catch {
-    return null;
+    // 6.10/6.15 — A decryption failure is a real problem, not "no creds".
+    // A compliance product must never confuse "we couldn't decrypt" with
+    // "nothing was configured". Return a distinguishable error by throwing
+    // so the caller sees a "failed" result rather than a silent "skipped".
+    throw new Error(
+      `Credential decryption failed for ${integration} — please reconnect credentials in the dashboard`,
+    );
   }
 }
 

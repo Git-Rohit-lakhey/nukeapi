@@ -160,7 +160,14 @@ export function httpConnector(spec: HttpSpec): ConnectorFn {
 
     for (const resItem of items) {
       const dctx: RunCtx = { ...ctx, res: resItem };
-      const durl = base + interpolate(del.path, dctx);
+      let durl = base + interpolate(del.path, dctx);
+      // Append delete query params if specified.
+      if (del.query) {
+        const dqs = new URLSearchParams();
+        for (const [k, v] of Object.entries(del.query)) dqs.set(k, interpolate(v, dctx));
+        const qs = dqs.toString();
+        if (qs) durl += `?${qs}`;
+      }
       const dbodyRaw = del.body
         ? typeof del.body === "function"
           ? del.body(dctx)

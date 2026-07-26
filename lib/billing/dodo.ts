@@ -8,7 +8,13 @@ import { dodoProductEnvFor, type PlanSlug } from "@/lib/constants/compliance";
  * api.dodopayments.com is NOT a real Dodo host.
  */
 export function getDodoBaseUrl(): string {
-  return process.env.DODO_PAYMENTS_ENVIRONMENT === "live_mode"
+  const env = process.env.DODO_PAYMENTS_ENVIRONMENT;
+  if (!env) {
+    console.warn(
+      "[dodo] DODO_PAYMENTS_ENVIRONMENT not set — defaulting to test mode. Set to 'live_mode' for production.",
+    );
+  }
+  return env === "live_mode"
     ? "https://live.dodopayments.com"
     : "https://test.dodopayments.com";
 }

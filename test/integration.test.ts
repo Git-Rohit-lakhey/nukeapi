@@ -181,10 +181,11 @@ test("compliance: free is a fixed whitelist, paid plans allow any registered int
   // Free: only the 3 fixed integrations, and they must match the homepage example.
   assert.deepEqual(
     [...FREE_INTEGRATIONS].sort(),
-    ["hubspot", "intercom", "mailchimp"].sort(),
+    ["hubspot", "stripe", "mailchimp"].sort(),
   );
   assert.equal(isIntegrationAllowed("free", "mailchimp"), true);
-  assert.equal(isIntegrationAllowed("free", "stripe"), false);
+  assert.equal(isIntegrationAllowed("free", "stripe"), true);
+  assert.equal(isIntegrationAllowed("free", "intercom"), false);
   assert.equal(isIntegrationAllowed("free", "firebaseauth"), false);
 
   // Paid: allowed regardless of which integration (subject to owner flag + cap).

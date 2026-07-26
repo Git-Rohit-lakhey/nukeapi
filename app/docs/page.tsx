@@ -15,37 +15,42 @@ const ENDPOINTS = [
     desc: 'Delete a user from all connected integrations. Returns JSON or a signed PDF audit report.',
     auth: 'Bearer API Key',
     body: `{
-  "email": "user@example.com",      // required — the user to delete
-  "integrations": ["stripe",        // required — which services to delete from
+  "subject_email": "user@example.com",  // required — the user to delete
+  "integrations": ["stripe",            // optional — defaults to all allowed + enabled
                    "mailchimp",
                    "hubspot"],
-  "return_pdf": false,              // optional — true returns a signed PDF
-  "external_id": "user_abc123",     // optional — your internal user ID
-  "meta": {}                        // optional — any extra metadata to log
+  "subject_external_id": "user_123",    // optional — your internal user ID
+  "webhook": "https://..."              // optional — signed POST on completion
 }`,
     response: `{
   "success": true,
   "requestId": "req_xxxxxxxx",
   "data": {
+    "requestId": "req_xxxxxxxx",
     "status": "completed",          // "completed" | "partial" | "failed"
     "results": [
-      { "integration": "stripe",    "status": "success", "durationMs": 312 },
-      { "integration": "mailchimp", "status": "success", "durationMs": 187 }
+      { "integration": "stripe",    "status": "success", "message": "Deleted 1 customer(s)", "durationMs": 312 },
+      { "integration": "mailchimp", "status": "success", "message": "Removed from 3 list(s)", "durationMs": 187 }
     ],
-    "elapsedMs": 445,
+    "startedAt": "2026-07-01T10:00:00Z",
+    "completedAt": "2026-07-01T10:00:01Z",
+    "elapsedMs": 890,
+    "auditSignature": "hex-hmac-sha256...",
     "usage": {
       "plan": "startup",
       "used": 14,
       "limit": 200,
-      "remaining": 186
+      "remaining": 186,
+      "overageRate": 0.5
     }
   }
 }`,
     errors: [
       ['401', 'Missing or invalid API key'],
-      ['403', 'CONNECTOR_DISABLED — integration toggled off by the owner, or your plan does not allow it'],
-      ['422', 'Validation error — invalid email or unknown integration'],
-      ['429', 'Rate limit (30 req/min) or monthly plan limit exceeded'],
+      ['403', 'INTEGRATION_NOT_ALLOWED — plan does not include the requested integration, or CONNECTOR_DISABLED — toggled off by the owner'],
+      ['400', 'Validation error — invalid email or malformed request body'],
+      ['402', 'QUOTA_EXCEEDED — monthly plan limit reached'],
+      ['429', 'Rate limit (60 req/min per key) exceeded'],
       ['500', 'Deletion engine error — check results array for per-integration detail'],
     ],
   },
@@ -77,9 +82,8 @@ const CODE_EXAMPLES = {
   -H "Authorization: Bearer nk_live_••••••••" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "email": "user@example.com",
-    "integrations": ["stripe", "mailchimp", "hubspot"],
-    "return_pdf": true
+    "subject_email": "user@example.com",
+    "integrations": ["mailchimp", "hubspot", "intercom"]
   }'`,
   node: `const res = await fetch('https://nukeapi.dev/api/v1/delete-user', {
   method: 'POST',
@@ -88,9 +92,8 @@ const CODE_EXAMPLES = {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    email: 'user@example.com',
-    integrations: ['stripe', 'mailchimp', 'hubspot'],
-    return_pdf: true,
+    subject_email: 'user@example.com',
+    integrations: ['mailchimp', 'hubspot', 'intercom'],
   }),
 })
 const data = await res.json()
@@ -101,9 +104,8 @@ res = requests.post(
     'https://nukeapi.dev/api/v1/delete-user',
     headers={'Authorization': 'Bearer nk_live_••••••••'},
     json={
-        'email': 'user@example.com',
-        'integrations': ['stripe', 'mailchimp', 'hubspot'],
-        'return_pdf': True,
+        'subject_email': 'user@example.com',
+        'integrations': ['mailchimp', 'hubspot', 'intercom'],
     }
 )
 print(res.json()['data']['status'])  # "completed"`,
@@ -192,9 +194,9 @@ export default function DocsPage() {
         <table>
           <thead><tr><th>Plan</th><th>Requests/min</th><th>Deletions/month</th><th>Overage</th></tr></thead>
           <tbody>
-            <tr><td>Sandbox</td><td>30</td><td>20</td><td>None</td></tr>
-            <tr><td>Startup</td><td>30</td><td>200</td><td>$0.50 / deletion</td></tr>
-            <tr><td>Business</td><td>30</td><td>1,000</td><td>$0.35 / deletion</td></tr>
+            <tr><td>Sandbox</td><td>60</td><td>20</td><td>None</td></tr>
+            <tr><td>Startup</td><td>60</td><td>200</td><td>$0.50 / deletion</td></tr>
+            <tr><td>Business</td><td>60</td><td>1,000</td><td>$0.35 / deletion</td></tr>
             <tr><td>Enterprise</td><td>Custom</td><td>Unlimited</td><td>Included</td></tr>
           </tbody>
         </table>
@@ -227,8 +229,9 @@ export default function DocsPage() {
 
         {/* PDF audit */}
         <h2>PDF Audit Reports</h2>
-        <p>Set <code>return_pdf: true</code> to receive a signed PDF audit trail instead of JSON. The PDF includes the request ID, subject email, per-integration results, timestamps, and duration — suitable for GDPR Article 17 compliance records.</p>
-        <p>PDFs are also downloadable any time from your dashboard under Deletions → Details → Download PDF.</p>
+        <p>Download a signed PDF audit trail for any deletion request from your dashboard under Deletions → Details → Download PDF. The PDF includes the request ID, subject email, per-integration results, timestamps, duration, and a cryptographic HMAC-SHA256 signature — suitable for GDPR Article 17 compliance records.</p>
+        <p>PDF generation is available on the Startup plan and above.</p>
+        <p>PDFs are also downloadable any time from your dashboard under Deletions → Details → Download PDF (Startup plan and above).</p>
 
         <div style={{ marginTop:56, paddingTop:24, borderTop:'1px solid #141418', fontSize:'13px', color:'#383840' }}>
           <Link href="/" style={{ color:LIME }}>← Back to NukeAPI</Link>
