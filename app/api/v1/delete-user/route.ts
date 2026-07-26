@@ -9,8 +9,9 @@ import {
   buildUsageInfo,
 } from "@/lib/engine/metering";
 import { runDeletion } from "@/lib/engine/orchestrator";
-import { getConnector, REGISTERED_INTEGRATIONS } from "@/lib/connectors/index";
+import { getConnector, REGISTERED_INTEGRATIONS, CONNECTORS } from "@/lib/connectors/index";
 import { getUsableIntegrationSet, getCustomGrantsForUser } from "@/lib/connectors/flags";
+import { loadCustomConnectors } from "@/lib/connectors/custom/loader";
 import { isIntegrationAllowed } from "@/lib/constants/compliance";
 import { signAudit } from "@/lib/security/signing";
 import { updateDeletionRequest } from "@/lib/audit/logger";
@@ -201,6 +202,10 @@ export async function POST(req: NextRequest) {
   const requestId = inserted.id;
 
   // 6) Run the orchestrator (parallel connectors, partial-failure safe).
+  //    Load user's custom connectors and merge with built-in registry.
+  const customConnectors = await loadCustomConnectors(apiKey.user_id);
+  const mergedConnectors = { ...CONNECTORS, ...customConnectors };
+
   const result = await runDeletion({
     userId: apiKey.user_id,
     email,
@@ -208,6 +213,7 @@ export async function POST(req: NextRequest) {
     requestId,
     startedAt,
     enabledSet: allowedSet,
+    connectors: mergedConnectors,
   });
 
   // 7) Sign the canonical result (HMAC-SHA256, Section 6.6).

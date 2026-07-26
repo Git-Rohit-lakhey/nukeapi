@@ -19,6 +19,7 @@ export default function LandingPage() {
   // fetch resolves we fall back to the static `live` defaults below.
   const [liveOverrides, setLiveOverrides] = useState<Record<string, boolean>>({});
   const [maintOverrides, setMaintOverrides] = useState<Record<string, boolean>>({});
+  const [showAllIntegrations, setShowAllIntegrations] = useState(false);
 
   async function goToCheckout(plan: "startup" | "business" | "enterprise") {
     setCheckoutLoading(plan);
@@ -208,50 +209,83 @@ async fn main() {
   const visibleLogs = INTEG_LOGS.slice(0, Math.min(5, (tick % 6) + 1));
 
   const INTEGRATIONS = [
+    // Batch 1 — core / most popular
     { n: "Stripe", tag: "Payments", live: true },
     { n: "Mailchimp", tag: "Email", live: true },
     { n: "HubSpot", tag: "CRM", live: true },
     { n: "Intercom", tag: "Support", live: true },
     { n: "Supabase", tag: "Database", live: true },
     { n: "PostgreSQL", tag: "Database", live: true },
-    { n: "Salesforce", tag: "SOON", live: false },
-    { n: "Segment", tag: "SOON", live: false },
-    { n: "Klaviyo", tag: "SOON", live: false },
-    { n: "SendGrid", tag: "SOON", live: false },
-    { n: "Auth0", tag: "SOON", live: false },
-    { n: "Clerk", tag: "SOON", live: false },
-    { n: "PostHog", tag: "SOON", live: false },
-    { n: "Zendesk", tag: "SOON", live: false },
-    { n: "Mixpanel", tag: "SOON", live: false },
-    // Databases
+    { n: "Salesforce", tag: "CRM", live: false },
+    { n: "Segment", tag: "Analytics", live: false },
+    { n: "Klaviyo", tag: "Email", live: false },
+    { n: "SendGrid", tag: "Email", live: false },
+    { n: "Auth0", tag: "Auth", live: false },
+    { n: "Clerk", tag: "Auth", live: false },
+    { n: "PostHog", tag: "Analytics", live: false },
+    { n: "Zendesk", tag: "Support", live: false },
+    { n: "Mixpanel", tag: "Analytics", live: false },
     { n: "MySQL", tag: "Database", live: false },
     { n: "PlanetScale", tag: "Database", live: false },
     { n: "Neon", tag: "Database", live: false },
     { n: "MongoDB", tag: "Database", live: false },
     { n: "Firestore", tag: "Database", live: false },
-    // Email
     { n: "ConvertKit", tag: "Email", live: false },
     { n: "ActiveCampaign", tag: "Email", live: false },
     { n: "Resend", tag: "Email", live: false },
     { n: "Drip", tag: "Email", live: false },
-    // Analytics
     { n: "Amplitude", tag: "Analytics", live: false },
     { n: "FullStory", tag: "Analytics", live: false },
     { n: "Heap", tag: "Analytics", live: false },
-    { n: "June", tag: "Analytics", live: false },
-    // Payments
     { n: "Paddle", tag: "Payments", live: false },
+    // Batch 2 — extended catalog
+    { n: "Braintree", tag: "Payments", live: false },
     { n: "Chargebee", tag: "Payments", live: false },
     { n: "Recurly", tag: "Payments", live: false },
-    { n: "Braintree", tag: "Payments", live: false },
-    // CRM / Support
     { n: "Pipedrive", tag: "CRM", live: false },
     { n: "Freshdesk", tag: "Support", live: false },
     { n: "Crisp", tag: "Support", live: false },
-    // Auth
     { n: "Firebase Auth", tag: "Auth", live: false },
     { n: "Okta", tag: "Auth", live: false },
     { n: "Stytch", tag: "Auth", live: false },
+    { n: "Turso", tag: "Database", live: false },
+    { n: "Redis", tag: "Database", live: false },
+    { n: "Elasticsearch", tag: "Search", live: false },
+    { n: "Cassandra", tag: "Database", live: false },
+    { n: "WorkOS", tag: "Auth", live: false },
+    { n: "Cognito", tag: "Auth", live: false },
+    { n: "Keycloak", tag: "Auth", live: false },
+    { n: "Brevo", tag: "Email", live: false },
+    { n: "Omnisend", tag: "Email", live: false },
+    { n: "Beehiiv", tag: "Email", live: false },
+    { n: "Loops", tag: "Email", live: false },
+    { n: "Customer.io", tag: "Email", live: false },
+    { n: "Linear", tag: "Project Mgmt", live: false },
+    { n: "Help Scout", tag: "Support", live: false },
+    { n: "Gorgias", tag: "Support", live: false },
+    { n: "Groove", tag: "Support", live: false },
+    { n: "Smartlook", tag: "Analytics", live: false },
+    { n: "LogRocket", tag: "Analytics", live: false },
+    { n: "Datadog", tag: "Monitoring", live: false },
+    { n: "Pendo", tag: "Analytics", live: false },
+    { n: "Lemon Squeezy", tag: "Payments", live: false },
+    { n: "Gumroad", tag: "Payments", live: false },
+    { n: "Zuora", tag: "Payments", live: false },
+    { n: "AWS S3", tag: "Storage", live: false },
+    { n: "Cloudflare R2", tag: "Storage", live: false },
+    { n: "Google Cloud Storage", tag: "Storage", live: false },
+    { n: "Vercel Blob", tag: "Storage", live: false },
+    { n: "Twilio", tag: "Commms", live: false },
+    { n: "Vonage", tag: "Commms", live: false },
+    { n: "Plivo", tag: "Commms", live: false },
+    { n: "Notion", tag: "Productivity", live: false },
+    { n: "Airtable", tag: "Database", live: false },
+    { n: "Webflow", tag: "CMS", live: false },
+    { n: "Memberstack", tag: "Auth", live: false },
+    { n: "Outseta", tag: "Auth", live: false },
+    { n: "Braze", tag: "Marketing", live: false },
+    { n: "Iterable", tag: "Marketing", live: false },
+    { n: "Vero", tag: "Marketing", live: false },
   ];
 
   const isLive = (name: string): boolean => {
@@ -284,7 +318,7 @@ async fn main() {
       priceM: 299,
       priceY: 2990,
       desc: "For funded startups passing SOC 2 or GDPR audits",
-      feats: ["1,000 deletions / month", "Up to 20 integrations", "+$0.35 per extra deletion", "Audit-log export", "Slack & email alerts"],
+      feats: ["1,000 deletions / month", "Up to 20 integrations", "+$0.35 per extra deletion", "Custom HTTP connectors", "Audit-log export", "Slack & email alerts"],
       cta: "Start trial",
       feat: false,
     },
@@ -695,9 +729,11 @@ async fn main() {
         <div style={{ ...S.inner, textAlign: "center" }}>
           <div style={S.eyebrow}>Integrations</div>
           <h2 style={{ ...S.h2, marginBottom: 12 }}>Covers your entire stack</h2>
-          <p style={{ fontSize: "15px", color: "#484858", marginBottom: 48 }}>Live now — more shipping monthly</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginBottom: 44 }}>
-            {INTEGRATIONS.map(({ n, tag }) => {
+          <p style={{ fontSize: "15px", color: "#484858", marginBottom: 48 }}>
+            {INTEGRATIONS.length} integrations — more shipping monthly
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginBottom: 24 }}>
+            {(showAllIntegrations ? INTEGRATIONS : INTEGRATIONS.slice(0, 28)).map(({ n, tag }) => {
               const live = isLive(n);
               const maint = Boolean(maintOverrides[n]);
               const badgeText = maint ? "MAINT" : tag;
@@ -722,7 +758,16 @@ async fn main() {
               );
             })}
           </div>
-          <p style={{ fontSize: "14px", color: "#383840" }}>
+          {!showAllIntegrations && INTEGRATIONS.length > 28 && (
+            <button
+              onClick={() => setShowAllIntegrations(true)}
+              className="btn"
+              style={{ marginBottom: 20 }}
+            >
+              Show all {INTEGRATIONS.length} integrations →
+            </button>
+          )}
+          <p style={{ fontSize: "14px", color: "#383840", marginTop: showAllIntegrations ? 20 : 0 }}>
             Need a custom integration?{" "}
             <a href="mailto:hello@nukeapi.dev" style={{ color: LIME, textDecoration: "underline", textUnderlineOffset: 4 }}>
               Request it →
@@ -863,17 +908,13 @@ async fn main() {
                     <button
                       onClick={() => goToCheckout(planSlug as "startup" | "business" | "enterprise")}
                       disabled={checkoutLoading === planSlug}
+                      className={feat ? "bp" : isEnt ? "bp" : "bg"}
                       style={{
                         padding: "13px",
                         borderRadius: 8,
                         fontSize: "14px",
                         width: "100%",
-                        border: "none",
-                        fontFamily: "inherit",
-                        fontWeight: 700,
-                        cursor: checkoutLoading === planSlug ? "not-allowed" : "pointer",
-                        background: isEnt ? PURPLE : feat ? LIME : "#1a1a1e",
-                        color: isEnt ? "#fff" : feat ? "#000" : "#d0d0d0",
+                        ...(isEnt ? { background: PURPLE, color: "#fff" } : {}),
                       }}
                     >
                       {checkoutLoading === planSlug ? "Loading…" : cta}
@@ -1076,8 +1117,8 @@ async fn main() {
           </div>
 
           <style>{`
-            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-            .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px;display:flex;flex-direction:column;transition:all .2s}
+            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;justify-items:center}
+            .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px;display:flex;flex-direction:column;transition:all .2s;width:100%}
             .devcard:hover{border-color:#2c2c36;transform:translateY(-2px)}
             .devcode{background:#08080a;border:1px solid #16161c;border-radius:10px;padding:16px;font-size:12px;line-height:1.7;color:#8080a0;overflow-x:auto;margin:0 0 16px;font-family:'SF Mono','Fira Code',monospace}
             .devlink{color:${LIME};font-size:14px;font-weight:600;text-decoration:none}

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/db/browser";
 import { ALL_CONNECTOR_META, type ConnectorMeta } from "@/lib/connectors/meta";
 import { getMaxIntegrations } from "@/lib/constants/compliance";
+import { CustomConnectors } from "@/components/dashboard/CustomConnectors";
 import type { Integration } from "@/types/connector";
 
 interface MineIntegration {
@@ -305,6 +306,9 @@ export default function ConnectorsPage() {
           </div>
         </div>
       )}
+
+      {/* Custom connectors (Business+) */}
+      <CustomConnectors plan={plan} />
     </div>
   );
 }
