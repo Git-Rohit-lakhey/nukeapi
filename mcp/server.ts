@@ -28,7 +28,7 @@ import { ALL_INTEGRATIONS } from "../types/connector";
 // server's integration list can never drift from the product's 78 integrations.
 const INTEGRATION_ENUM = z.enum(ALL_INTEGRATIONS as unknown as [string, ...string[]]);
 
-const BASE_URL = (process.env.NUKEAPI_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
+const BASE_URL = (process.env.NUKEAPI_BASE_URL || "https://nukeapi.dev").replace(/\/$/, "");
 const API_KEY = process.env.NUKEAPI_API_KEY || "";
 
 function authHeaders(): Record<string, string> {

@@ -20,5 +20,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "sdk", "n8n-nodes-nukeapi", "dist", "*.dist"]
+  "exclude": ["node_modules", "sdk", "n8n-nodes-nukeapi", "dist", "*.dist", "lib/connectors/_archive"]
 }

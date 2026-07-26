@@ -1,7 +1,7 @@
 import type { ConnectorResult } from "@/types/connector";
 import type { ConnectorSpec } from "../engine/types";
 import { fetchWithRetry, parseJsonSafe } from "../fetchHelper";
-import { validateSqlIdentifier } from "../postgresql";
+import { validateSqlIdentifier } from "../engine/sql";
 
 /**
  * Batch 6 connector specs.

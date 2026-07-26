@@ -6,11 +6,11 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nukeapi/nukeapi.git"
+    "url": "git+https://github.com/Git-Rohit-lakhey/nukeapi.git"
   },
-  "homepage": "https://github.com/nukeapi/nukeapi#readme",
+  "homepage": "https://github.com/Git-Rohit-lakhey/nukeapi#readme",
   "bugs": {
-    "url": "https://github.com/nukeapi/nukeapi/issues"
+    "url": "https://github.com/Git-Rohit-lakhey/nukeapi/issues"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

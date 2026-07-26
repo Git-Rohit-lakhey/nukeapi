@@ -73,7 +73,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const email = (body.subject_email ?? "").trim().toLowerCase();
+  // Accept `email` as a fallback alias for `subject_email` so already-integrated
+  // customers using the old (documented-but-wrong) field name don't break.
+  const emailRaw = (body.subject_email ?? ((body as unknown as Record<string, unknown>).email as string) ?? "") as string;
+  const email = emailRaw.trim().toLowerCase();
+  if (emailRaw !== (body.subject_email ?? "") && email) {
+    console.warn("[delete-user] 'email' field used instead of 'subject_email' — migrate to subject_email");
+  }
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json(
       {

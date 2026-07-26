@@ -6,7 +6,7 @@ import { errorResponse, withErrorHandler } from "@/lib/engine/errors";
 import { isRegisteredIntegration } from "@/lib/connectors/index";
 import { CONNECTOR_META } from "@/lib/connectors/meta";
 import { getUsableIntegrationSet, getCustomGrantsForUser } from "@/lib/connectors/flags";
-import { validateSqlIdentifier } from "@/lib/connectors/postgresql";
+import { validateSqlIdentifier } from "@/lib/connectors/engine/sql";
 import { getPlanForUser } from "@/lib/engine/metering";
 import { getMaxIntegrations, isIntegrationAllowed } from "@/lib/constants/compliance";
 import type { Integration } from "@/types/connector";

@@ -8,6 +8,7 @@ import {
   getNotificationSettings,
   validateOutboundUrl,
   validateSlackUrl,
+  encryptUrl,
 } from "@/lib/notify/settings";
 
 export const runtime = "nodejs";
@@ -80,7 +81,7 @@ export const PUT = withErrorHandler(async (req: NextRequest) => {
           400,
         );
       }
-      update.webhook_url = valid;
+      update.webhook_url = encryptUrl(valid);
     }
   }
 
@@ -105,7 +106,7 @@ export const PUT = withErrorHandler(async (req: NextRequest) => {
           400,
         );
       }
-      update.slack_webhook_url = valid;
+      update.slack_webhook_url = encryptUrl(valid);
     }
   }
 

@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["-y", "tsx", "/ABSOLUTE/PATH/TO/nukeapi/mcp/server.ts"],
       "env": {
-        "NUKEAPI_BASE_URL": "http://localhost:3000",
+        "NUKEAPI_BASE_URL": "https://nukeapi.dev",
         "NUKEAPI_API_KEY": "nk_test_replace_me"
       }
     }

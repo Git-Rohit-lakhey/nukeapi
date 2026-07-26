@@ -25,7 +25,7 @@ model stays intact.
 
 | Var | Required | Default | Description |
 |-----|----------|---------|-------------|
-| `NUKEAPI_BASE_URL` | no | `http://localhost:3000` | Base URL of your NukeAPI instance (e.g. `https://app.nukeapi.com`). |
+| `NUKEAPI_BASE_URL` | no | `https://nukeapi.dev` | Base URL of your NukeAPI instance. |
 | `NUKEAPI_API_KEY` | yes (for `nuke_delete_user` / `nuke_get_request`) | — | A NukeAPI API key (`nk_live_...` / `nk_test_...`) from your dashboard's `/keys` page. Public tools (`nuke_status`, `nuke_list_integrations`) work without it. |
 
 The transport is **stdio** — the server reads JSON-RPC messages from stdin and
@@ -39,7 +39,7 @@ callers.
 The server runs with `tsx` (already a dev dependency). From the repo root:
 
 ```bash
-NUKEAPI_BASE_URL=http://localhost:3000 \
+NUKEAPI_BASE_URL=https://nukeapi.dev \
 NUKEAPI_API_KEY=nk_test_xxx \
 npm run mcp
 ```
@@ -75,7 +75,7 @@ Example `claude_desktop_config.json` entry:
       "command": "npx",
       "args": ["-y", "tsx", "/ABSOLUTE/PATH/TO/nukeapi/mcp/server.ts"],
       "env": {
-        "NUKEAPI_BASE_URL": "http://localhost:3000",
+        "NUKEAPI_BASE_URL": "https://nukeapi.dev",
         "NUKEAPI_API_KEY": "nk_test_replace_me"
       }
     }
@@ -94,7 +94,7 @@ Add a `.cursor/mcp.json` at the repo root (Cursor reads it automatically):
       "command": "npx",
       "args": ["-y", "tsx", "/ABSOLUTE/PATH/TO/nukeapi/mcp/server.ts"],
       "env": {
-        "NUKEAPI_BASE_URL": "http://localhost:3000",
+        "NUKEAPI_BASE_URL": "https://nukeapi.dev",
         "NUKEAPI_API_KEY": "nk_test_replace_me"
       }
     }

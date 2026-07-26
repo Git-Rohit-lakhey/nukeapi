@@ -24,11 +24,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lakhu-studio/nukeapi.git"
+    "url": "https://github.com/Git-Rohit-lakhey/nukeapi.git"
   },
-  "homepage": "https://nukeapi.com",
+  "homepage": "https://nukeapi.dev",
   "bugs": {
-    "url": "https://github.com/lakhu-studio/nukeapi/issues"
+    "url": "https://github.com/Git-Rohit-lakhey/nukeapi/issues"
   },
   "keywords": [
     "n8n",

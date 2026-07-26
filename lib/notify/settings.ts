@@ -1,5 +1,7 @@
 import "server-only";
 import { getSupabaseAdmin } from "@/lib/db/supabase";
+import { encryptJSON, decryptJSON } from "@/lib/security/crypto";
+import type { EncryptedEnvelope } from "@/types/connector";
 
 export interface NotificationSettings {
   webhook_url: string | null;
@@ -61,7 +63,24 @@ export function validateSlackUrl(raw: string | null | undefined): string | null 
   }
 }
 
-/** Load a user's notification settings (defaults when no row exists). */
+/** Encrypt a URL for storage (AES-256-GCM envelope). */
+export function encryptUrl(url: string | null): unknown {
+  if (!url) return null;
+  return encryptJSON({ url });
+}
+
+/** Decrypt a stored URL envelope back to plaintext. */
+export function decryptUrl(encrypted: unknown): string | null {
+  if (!encrypted) return null;
+  try {
+    const obj = decryptJSON<{ url?: string }>(encrypted as EncryptedEnvelope);
+    return obj?.url ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Load a user's notification settings (decrypts URLs). */
 export async function getNotificationSettings(
   userId: string,
 ): Promise<NotificationSettings> {
@@ -73,8 +92,8 @@ export async function getNotificationSettings(
     .maybeSingle();
   if (error || !data) return EMPTY;
   return {
-    webhook_url: data.webhook_url ?? null,
-    slack_webhook_url: data.slack_webhook_url ?? null,
+    webhook_url: decryptUrl(data.webhook_url),
+    slack_webhook_url: decryptUrl(data.slack_webhook_url),
     email_alerts: data.email_alerts ?? true,
   };
 }

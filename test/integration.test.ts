@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import { encryptString, decryptEnvelope } from "@/lib/security/crypto";
 import { signAudit, verifyAudit } from "@/lib/security/signing";
 import { generateApiKey, hashApiKey } from "@/lib/auth/keys";
-import { validateSqlIdentifier } from "@/lib/connectors/postgresql";
+import { validateSqlIdentifier } from "@/lib/connectors/engine/sql";
 import { resolveEnabled } from "@/lib/connectors/flags";
 import { runDeletion } from "@/lib/engine/orchestrator";
 import {
