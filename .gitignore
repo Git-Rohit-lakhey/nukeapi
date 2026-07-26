@@ -7,6 +7,4 @@ node_modules/
 # OS / editor
 .DS_Store
 .vercel
-
-.vercel
-.env*
+supabase/.temp/
