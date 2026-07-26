@@ -80,16 +80,6 @@ export function SiteNav() {
           transition: color .15s; cursor: pointer;
         }
         .nav-link:hover { color: var(--lime); }
-        .bp {
-          background: var(--lime); color: #000; font-weight: 700; border: none;
-          cursor: pointer; font-family: inherit; transition: all .15s; letter-spacing: .02em;
-        }
-        .bp:hover { filter: brightness(1.08); transform: translateY(-1px); }
-        .bg {
-          background: transparent; color: #d0d0d0; border: 1px solid #2a2a32;
-          cursor: pointer; font-family: inherit; transition: all .15s;
-        }
-        .bg:hover { border-color: var(--lime); color: var(--lime); }
         @media (max-width: 768px) { .nl { display: none !important; } }
       `}</style>
     </nav>

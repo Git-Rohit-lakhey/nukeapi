@@ -114,7 +114,7 @@ print(res.json()['data']['status'])  # "completed"`,
 export default function DocsPage() {
   return (
     <div style={{ minHeight:'100vh', background:'#0a0a0c', color:'#d0d0d0', fontFamily:"'SF Mono','Fira Code',monospace", padding:'60px 5%' }}>
-      <div style={{ maxWidth:800, margin:'0 auto' }}>
+      <div style={{ maxWidth:800, margin:'0 auto', overflow:'hidden' }}>
         <div style={{ marginBottom:40 }}>
           <Link href="/" style={{ fontSize:'1.1rem', fontWeight:800, textDecoration:'none', color:'#e0e0e0' }}>
             <span style={{ color:LIME }}>Nuke</span>API
@@ -135,9 +135,9 @@ export default function DocsPage() {
           li{font-size:14px;line-height:1.85;color:#686878;margin-bottom:6px}
           ul{padding-left:20px;margin-bottom:12px}
           code{background:#111114;padding:2px 6px;border-radius:4px;font-size:12px;color:${LIME}}
-          pre{background:#0d0d10;border:1px solid #1e1e24;border-radius:10px;padding:20px;overflow-x:auto;margin:16px 0}
-          pre code{background:none;padding:0;color:#8080a0;font-size:12px;line-height:1.8}
-          table{width:100%;border-collapse:collapse;margin:16px 0}
+          pre{background:#0d0d10;border:1px solid #1e1e24;border-radius:10px;padding:20px;overflow-x:auto;margin:16px 0;max-width:100%}
+          pre code{background:none;padding:0;color:#8080a0;font-size:12px;line-height:1.8;white-space:pre}
+          table{width:100%;border-collapse:collapse;margin:16px 0;display:block;overflow-x:auto}
           td,th{border:1px solid #1e1e24;padding:10px 14px;font-size:13px;text-align:left}
           th{color:#e0e0e0;background:#111114}
           a{color:${LIME}}

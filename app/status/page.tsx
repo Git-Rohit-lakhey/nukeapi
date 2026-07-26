@@ -82,7 +82,7 @@ export default function StatusPage() {
         </div>
 
         {/* Stats (from the reference design) */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 20 }}>
+        <div className="grid grid-2" style={{ marginTop: 20 }}>
           <div className="card" style={{ padding: "16px 20px" }}>
             <div style={{ fontSize: 11, color: "var(--lime)", letterSpacing: ".1em", marginBottom: 8 }}>UPTIME</div>
             <div style={{ fontSize: 32, fontWeight: 900, color: status === "operational" ? "var(--emerald)" : "var(--rose)", letterSpacing: "-.03em" }}>

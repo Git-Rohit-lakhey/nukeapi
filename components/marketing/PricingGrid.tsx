@@ -92,7 +92,11 @@ export default function PricingGrid({
             <div
               className="card"
               key={slug}
-              style={isFeatured ? { borderColor: "var(--lime-28)" } : undefined}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                ...(isFeatured ? { borderColor: "var(--lime-28)" } : undefined),
+              }}
             >
               {isFeatured && (
                 <span className="badge badge-lime" style={{ marginBottom: 12 }}>
@@ -116,6 +120,7 @@ export default function PricingGrid({
                   margin: "14px 0",
                   fontSize: 14,
                   color: "var(--t2)",
+                  flex: 1,
                 }}
               >
                 <li>· {def.includedDeletions === Infinity ? "Unlimited" : def.includedDeletions} deletions/mo</li>

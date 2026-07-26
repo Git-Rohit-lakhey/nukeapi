@@ -155,7 +155,7 @@ p {
   background: var(--s3);
   color: var(--txt);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, opacity 0.15s;
+  transition: all 0.15s ease;
   font-family: var(--sans);
 }
 .btn:hover {
@@ -170,6 +170,7 @@ p {
 .btn-primary:hover {
   background: #d6ff33;
   border-color: #d6ff33;
+  transform: translateY(-1px);
 }
 .btn-violet {
   background: var(--violet);
@@ -196,10 +197,41 @@ p {
   opacity: 0.5;
   cursor: not-allowed;
 }
+.btn:disabled:hover {
+  transform: none;
+}
 .btn-sm {
   padding: 7px 12px;
   font-size: 13px;
   border-radius: 9px;
+}
+
+/* ── Marketing buttons (shared nav + landing page) ──────── */
+.bp {
+  background: var(--lime);
+  color: #000;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  letter-spacing: 0.02em;
+}
+.bp:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.bg {
+  background: transparent;
+  color: #d0d0d0;
+  border: 1px solid #2a2a32;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.bg:hover {
+  border-color: var(--lime);
+  color: var(--lime);
 }
 
 /* ── Inputs ─────────────────────────────────────────────── */

@@ -303,7 +303,6 @@ async fn main() {
     <div style={S.page}>
       <SiteNav />
       <style>{`
-        *{box-sizing:border-box;margin:0;padding:0}
         ::selection{background:${LIME};color:#000}
         ::-webkit-scrollbar{width:5px}
         ::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
@@ -315,13 +314,9 @@ async fn main() {
         .up{animation:fadeUp .55s ease both}
         .d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.45s}
         .slide{animation:slideIn .35s ease both}
-        .bp{background:${LIME};color:#000;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all .15s;letter-spacing:.02em}
-        .bp:hover{filter:brightness(1.08);transform:translateY(-1px)}
-        .bg{background:transparent;color:#d0d0d0;border:1px solid #2a2a32;cursor:pointer;font-family:inherit;transition:all .15s}
-        .bg:hover{border-color:${LIME};color:${LIME}}
-        .fc{background:#111114;border:1px solid #1e1e24;border-radius:14px;padding:28px;transition:all .2s}
+        .fc{background:#111114;border:1px solid #1e1e24;border-radius:14px;padding:24px;transition:all .2s}
         .fc:hover{border-color:#2c2c36;transform:translateY(-2px)}
-        .pc{background:#111114;border:1px solid #1e1e24;border-radius:16px;padding:32px;display:flex;flex-direction:column;transition:all .2s}
+        .pc{background:#111114;border:1px solid #1e1e24;border-radius:14px;padding:24px;display:flex;flex-direction:column;transition:all .2s}
         .pc:hover{border-color:#2c2c36}
         .pc.feat{border-color:rgba(200,241,53,.45);background:#0d1600}
         .pill{background:#111114;border:1px solid #1e1e24;border-radius:100px;padding:10px 20px;font-size:14px;display:flex;align-items:center;gap:10px;transition:all .15s}
