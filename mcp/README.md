@@ -61,7 +61,7 @@ Copy the contents of `mcp/claude_desktop_config.json` into your
 
 1. Replace `/ABSOLUTE/PATH/TO/nukeapi/mcp/server.ts` with the real absolute
    path to this file.
-2. Set `NUKEAPI_BASE_URL` to your instance (e.g. `https://app.nukeapi.com`).
+2. Set `NUKEAPI_BASE_URL` to your instance (e.g. `https://nukeapi.dev`).
 3. Set `NUKEAPI_API_KEY` to a real key from your NukeAPI dashboard (`/keys`).
 
 Restart Claude Desktop. The four tools appear under the `nukeapi` server.

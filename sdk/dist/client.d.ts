@@ -2,7 +2,7 @@ import type { DeleteUserResponse, GetRequestResponse, SystemStatusResponse } fro
 export interface NukeAPIClientOptions {
     /** API key, e.g. `nk_live_xxxxx` or `nk_test_xxxxx`. */
     apiKey: string;
-    /** Defaults to `https://app.nukeapi.com`. Use `http://localhost:3000` in dev. */
+    /** Defaults to `https://nukeapi.dev`. Use `http://localhost:3000` in dev. */
     baseUrl?: string;
     /** Per-request timeout in ms (default 10000). */
     timeoutMs?: number;

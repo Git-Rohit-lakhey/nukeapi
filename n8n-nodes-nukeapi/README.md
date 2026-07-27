@@ -67,7 +67,7 @@ For Docker, mount the built package into the custom-extensions path and restart 
 
 1. Open **Credentials → New** and search for **NukeAPI Api**.
 2. Paste your **API Key** (`nk_live_…`) from the NukeAPI dashboard.
-3. Set **Base URL** (defaults to `https://app.nukeapi.com`).
+3. Set **Base URL** (defaults to `https://nukeapi.dev`).
 4. Save, then select the credential on the NukeAPI node.
 
 The credential has a built-in **connection test** (verifies the Base URL is reachable

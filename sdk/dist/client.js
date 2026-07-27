@@ -1,5 +1,5 @@
 import { NukeAPIError } from "./errors.js";
-const DEFAULT_BASE_URL = "https://app.nukeapi.com";
+const DEFAULT_BASE_URL = "https://nukeapi.dev";
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_MAX_RETRIES = 2;
 /**

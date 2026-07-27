@@ -113,7 +113,7 @@ class NukeAPI {
     }
     async execute() {
         const credentials = (await this.getCredentials('nukeApiApi'));
-        const baseUrl = normalizeBaseUrl(credentials.baseUrl || 'https://app.nukeapi.com');
+        const baseUrl = normalizeBaseUrl(credentials.baseUrl || 'https://nukeapi.dev');
         const authHeader = { Authorization: `Bearer ${credentials.apiKey}` };
         const jsonHeaders = { 'Content-Type': 'application/json', ...authHeader };
         const items = this.getInputData();

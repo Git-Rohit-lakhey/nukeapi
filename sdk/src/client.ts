@@ -9,7 +9,7 @@ import type {
 export interface NukeAPIClientOptions {
   /** API key, e.g. `nk_live_xxxxx` or `nk_test_xxxxx`. */
   apiKey: string;
-  /** Defaults to `https://app.nukeapi.com`. Use `http://localhost:3000` in dev. */
+  /** Defaults to `https://nukeapi.dev`. Use `http://localhost:3000` in dev. */
   baseUrl?: string;
   /** Per-request timeout in ms (default 10000). */
   timeoutMs?: number;
@@ -19,7 +19,7 @@ export interface NukeAPIClientOptions {
   fetch?: typeof fetch;
 }
 
-const DEFAULT_BASE_URL = "https://app.nukeapi.com";
+const DEFAULT_BASE_URL = "https://nukeapi.dev";
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_MAX_RETRIES = 2;
 

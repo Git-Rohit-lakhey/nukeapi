@@ -9,7 +9,7 @@ const PURPLE = "#a855f7";
 
 export default function LandingPage() {
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"curl" | "node" | "python" | "go" | "rust">("curl");
+  const [activeTab, setActiveTab] = useState<"curl" | "node" | "python" | "go" | "rust" | "php" | "ruby" | "java">("curl");
   const [scrolled, setScrolled] = useState(false);
   const [tick, setTick] = useState(0);
   const [yearly, setYearly] = useState(false); // reference: monthly default
@@ -161,6 +161,60 @@ async fn main() {
         .unwrap();
 
     println!("{}", res.status()); // 200 OK
+}`,
+    php: `<?php
+
+$ch = curl_init('https://api.nukeapi.dev/v1/delete-user');
+curl_setopt_array($ch, [
+    CURLOPT_POST => true,
+    CURLOPT_HTTPHEADER => [
+        'Authorization: Bearer nk_live_••••••••',
+        'Content-Type: application/json',
+    ],
+    CURLOPT_POSTFIELDS => json_encode([
+        'subject_email' => 'jane@acme.com',
+        'integrations'  => ['stripe', 'mailchimp', 'hubspot'],
+    ]),
+    CURLOPT_RETURNTRANSFER => true,
+]);
+
+$resp = curl_exec($ch);
+curl_close($ch);
+echo json_decode($resp, true)['data']['status']; // completed`,
+    ruby: `require 'net/http'
+require 'json'
+
+uri = URI('https://api.nukeapi.dev/v1/delete-user')
+req = Net::HTTP::Post.new(uri)
+req['Authorization'] = 'Bearer nk_live_••••••••'
+req['Content-Type']  = 'application/json'
+req.body = {
+  subject_email: 'jane@acme.com',
+  integrations:  ['stripe', 'mailchimp', 'hubspot']
+}.to_json
+
+resp = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+puts JSON.parse(resp.body)['data']['status'] # completed`,
+    java: `import java.net.URI;
+import java.net.http.*;
+
+public class NukeExample {
+  public static void main(String[] args) throws Exception {
+    String json = """
+      {"subject_email":"jane@acme.com","integrations":["stripe","mailchimp","hubspot"]}
+      """;
+
+    HttpClient client = HttpClient.newHttpClient();
+    HttpRequest req = HttpRequest.newBuilder()
+      .uri(URI.create("https://api.nukeapi.dev/v1/delete-user"))
+      .header("Authorization", "Bearer nk_live_••••••••")
+      .header("Content-Type", "application/json")
+      .POST(HttpRequest.BodyPublishers.ofString(json))
+      .build();
+
+    HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
+    System.out.println(resp.statusCode()); // 200
+  }
 }`,
   };
 
@@ -462,7 +516,7 @@ async fn main() {
                 {[
                   ["<50ms", "avg response"],
                   ["99.9%", "uptime SLA"],
-                  [String(metaLiveCount), "integrations live"],
+                  [String(INTEGRATIONS.length), "integrations"],
                   ["GDPR+CCPA", "compliant"],
                 ].map(([v, l]) => (
                   <div key={l}>
@@ -634,7 +688,7 @@ async fn main() {
 
             <div style={{ background: "#0d0d10", border: "1px solid #1e1e24", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ display: "flex", borderBottom: "1px solid #181820", padding: "0 4px" }}>
-                {(["curl", "node", "python", "go", "rust"] as const).map((t) => (
+                {(["curl", "node", "python", "go", "rust", "php", "ruby", "java"] as const).map((t) => (
                   <button key={t} className={`tab${activeTab === t ? " on" : ""}`} onClick={() => setActiveTab(t)}>
                     {t}
                   </button>
@@ -1126,7 +1180,7 @@ async fn main() {
           </div>
 
           <style>{`
-            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;justify-items:center;max-width:960px;margin:0 auto}
+            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:0 auto}
             .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px;display:flex;flex-direction:column;transition:all .2s;width:100%;text-align:center;align-items:center}
             .devcard:hover{border-color:#2c2c36;transform:translateY(-2px)}
             .devcode{background:#08080a;border:1px solid #16161c;border-radius:10px;padding:16px;font-size:12px;line-height:1.7;color:#8080a0;overflow-x:auto;margin:0 0 16px;font-family:'SF Mono','Fira Code',monospace;text-align:left;width:100%}
@@ -1177,7 +1231,7 @@ await nuke.deleteUser({ subject_email, integrations })`}</pre>
       "command": "npx",
       "args": ["tsx", "/path/to/nukeapi/mcp/server.ts"],
       "env": {
-        "NUKEAPI_BASE_URL": "https://app.nukeapi.com",
+        "NUKEAPI_BASE_URL": "https://nukeapi.dev",
         "NUKEAPI_API_KEY": "nk_live_..."
       }
     }

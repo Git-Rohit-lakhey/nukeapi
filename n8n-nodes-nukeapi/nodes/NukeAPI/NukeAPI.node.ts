@@ -160,7 +160,7 @@ export class NukeAPI implements INodeType {
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const credentials = (await this.getCredentials('nukeApiApi')) as NukeApiCredentials;
-    const baseUrl = normalizeBaseUrl(credentials.baseUrl || 'https://app.nukeapi.com');
+    const baseUrl = normalizeBaseUrl(credentials.baseUrl || 'https://nukeapi.dev');
     const authHeader = { Authorization: `Bearer ${credentials.apiKey}` };
     const jsonHeaders = { 'Content-Type': 'application/json', ...authHeader };
 

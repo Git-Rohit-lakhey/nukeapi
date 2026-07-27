@@ -30,7 +30,7 @@ import { NukeAPI, NukeAPIError } from "@nukeapi/sdk";
 
 const nuke = new NukeAPI({
   apiKey: process.env.NUKEAPI_KEY!, // "nk_live_..." or "nk_test_..."
-  // baseUrl defaults to https://app.nukeapi.com
+  // baseUrl defaults to https://nukeapi.dev
 });
 
 const result = await nuke.deleteUser({
@@ -76,7 +76,7 @@ Claude Desktop `claude_desktop_config.json` (see
       "command": "npx",
       "args": ["-y", "tsx", "/ABSOLUTE/PATH/TO/nukeapi/mcp/server.ts"],
       "env": {
-        "NUKEAPI_BASE_URL": "https://app.nukeapi.com",
+        "NUKEAPI_BASE_URL": "https://nukeapi.dev",
         "NUKEAPI_API_KEY": "nk_test_replace_me"
       }
     }

@@ -5,7 +5,7 @@ import type { APIErrorBody, ConnectorResult, ConnectorStatus, DeleteUserRequest,
 export interface NukeAPICredentials {
     /** API key, e.g. `nk_live_xxxxx` or `nk_test_xxxxx`. */
     apiKey: string;
-    /** Defaults to `https://app.nukeapi.com`. Use `http://localhost:3000` in dev. */
+    /** Defaults to `https://nukeapi.dev`. Use `http://localhost:3000` in dev. */
     baseUrl?: string;
     /** Per-request timeout in ms (default 10000). */
     timeoutMs?: number;

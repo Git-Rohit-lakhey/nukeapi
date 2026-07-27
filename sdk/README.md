@@ -1,6 +1,6 @@
 # @nukeapi/sdk
 
-Official TypeScript SDK for [NukeAPI](https://app.nukeapi.com) — the GDPR / CCPA / LGPD user-deletion API. One call fans a deletion out across every integration you've connected, and returns a per-integration result plus a cryptographic audit signature.
+Official TypeScript SDK for [NukeAPI](https://nukeapi.dev) — the GDPR / CCPA / LGPD user-deletion API. One call fans a deletion out across every integration you've connected, and returns a per-integration result plus a cryptographic audit signature.
 
 - **Zero runtime dependencies.** Uses the global `fetch` (Node 18+ and modern browsers).
 - **ESM-first**, TypeScript strict mode, ships `.js` + `.d.ts` in `dist/`.
@@ -19,7 +19,7 @@ import { NukeAPI, NukeAPIError } from "@nukeapi/sdk";
 
 const nuke = new NukeAPI({
   apiKey: process.env.NUKEAPI_KEY!, // "nk_live_..." or "nk_test_..."
-  // baseUrl defaults to https://app.nukeapi.com
+  // baseUrl defaults to https://nukeapi.dev
   // use baseUrl: "http://localhost:3000" in development
 });
 

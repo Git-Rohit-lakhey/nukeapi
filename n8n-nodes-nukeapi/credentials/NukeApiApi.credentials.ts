@@ -7,7 +7,7 @@ import {
 export class NukeApiApi implements ICredentialType {
   name = 'nukeApiApi';
   displayName = 'NukeAPI Api';
-  documentationUrl = 'https://app.nukeapi.com';
+  documentationUrl = 'https://nukeapi.dev';
   properties: INodeProperties[] = [
     {
       displayName: 'API Key',
@@ -25,7 +25,7 @@ export class NukeApiApi implements ICredentialType {
       name: 'baseUrl',
       type: 'string',
       required: true,
-      default: 'https://app.nukeapi.com',
+      default: 'https://nukeapi.dev',
       description: 'The NukeAPI instance base URL.',
     },
   ];

@@ -5,7 +5,7 @@ class NukeApiApi {
     constructor() {
         this.name = 'nukeApiApi';
         this.displayName = 'NukeAPI Api';
-        this.documentationUrl = 'https://app.nukeapi.com';
+        this.documentationUrl = 'https://nukeapi.dev';
         this.properties = [
             {
                 displayName: 'API Key',
@@ -23,7 +23,7 @@ class NukeApiApi {
                 name: 'baseUrl',
                 type: 'string',
                 required: true,
-                default: 'https://app.nukeapi.com',
+                default: 'https://nukeapi.dev',
                 description: 'The NukeAPI instance base URL.',
             },
         ];
