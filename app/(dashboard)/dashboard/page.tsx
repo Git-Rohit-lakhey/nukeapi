@@ -61,7 +61,7 @@ export default async function DashboardPage() {
             {PLANS[plan as keyof typeof PLANS]?.label ?? plan}
           </div>
           <span className="badge badge-lime" style={{ marginTop: 8 }}>
-            {sub?.status ?? "active"}
+            {sub?.status === "trialing" ? "TRIAL" : sub?.status ?? "active"}
           </span>
         </div>
         <div className="card">

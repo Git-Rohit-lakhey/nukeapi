@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { getSupabaseBrowser } from "@/lib/db/browser";
 import { PLANS } from "@/lib/constants/compliance";
 import PricingGrid from "@/components/marketing/PricingGrid";
@@ -43,15 +43,16 @@ export default function SettingsPage() {
   });
   const [ssoBusy, setSsoBusy] = useState(false);
   const [ssoMsg, setSsoMsg] = useState<{ ok: boolean; msg: string } | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     const supabase = getSupabaseBrowser();
     const { data } = await supabase
       .from("subscriptions")
       .select("plan,status,external_subscription_id,current_period_end,trial_ends_at")
       .maybeSingle();
     setSub((data as SubRow) ?? null);
-  }
+  }, []);
 
   async function loadNotif() {
     try {
@@ -93,7 +94,31 @@ export default function SettingsPage() {
     load();
     loadNotif();
     loadSso();
-  }, []);
+
+    // After checkout redirect, poll for webhook updates for up to 30 seconds
+    const url = new URL(window.location.href);
+    const fromCheckout = url.searchParams.get("checkout") === "success";
+    if (fromCheckout) {
+      setFlash({ ok: true, msg: "Payment received. Waiting for subscription to activate…" });
+      let attempts = 0;
+      pollRef.current = setInterval(async () => {
+        attempts++;
+        await load();
+        // Stop polling once we have a paid plan or after 30 seconds
+        if ((sub && sub.plan !== "free") || attempts >= 15) {
+          if (pollRef.current) clearInterval(pollRef.current);
+          if (sub && sub.plan !== "free") {
+            setFlash({ ok: true, msg: "Subscription activated! Refreshing…" });
+            setTimeout(() => setFlash(null), 2000);
+          }
+        }
+      }, 2000);
+    }
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function saveSso() {
     setSsoMsg(null);
@@ -214,18 +239,15 @@ export default function SettingsPage() {
                   ? ` · ${Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days left`
                   : ""}
               </span>
-            ) : (
+            ) : sub?.status === "cancelled" ? (
+              <span className="badge badge-failed">CANCELLED</span>
+            ) : plan !== "free" ? (
               <span className="badge badge-lime">{sub?.status ?? "active"}</span>
+            ) : (
+              <span className="badge" style={{ color: "var(--t3)" }}>FREE</span>
             )}
           </div>
-          {sub?.status === "trialing" && sub?.trial_ends_at && (
-            <div style={{ textAlign: "right" }}>
-              <p className="dim" style={{ fontSize: 12, margin: 0 }}>
-                Trial ends {new Date(sub.trial_ends_at).toLocaleDateString()}
-              </p>
-            </div>
-          )}
-          {sub?.external_subscription_id && sub?.status !== "cancelled" && sub?.status !== "trialing" && (
+          {plan !== "free" && sub?.status !== "cancelled" && (
             <button className="btn btn-danger" disabled={busy} onClick={cancel}>
               Cancel subscription
             </button>

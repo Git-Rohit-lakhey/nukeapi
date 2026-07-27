@@ -7,6 +7,23 @@ import { ALL_PLAN_SLUGS, type PlanSlug } from "@/lib/constants/compliance";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/**
+ * Dodo Payments webhook handler.
+ *
+ * IMPORTANT: We ONLY process subscription lifecycle events. Payment events,
+ * refund events, etc. are acknowledged (200) but ignored — they don't
+ * affect subscription status.
+ */
+const SUBSCRIPTION_EVENT_TYPES = new Set([
+  "subscription.active",
+  "subscription.cancelled",
+  "subscription.expired",
+  "subscription.on_hold",
+  "subscription.plan_changed",
+  "subscription.failed",
+  "subscription.renewed",
+]);
+
 /** Reverse-map a Dodo product_id to our plan slug via env. */
 function planSlugFromProductId(productId: string | undefined): PlanSlug | null {
   if (!productId) return null;
@@ -31,13 +48,41 @@ function planSlugFromProductId(productId: string | undefined): PlanSlug | null {
   return null;
 }
 
-function mapStatus(dodoStatus: string | undefined): "active" | "cancelled" | "past_due" {
+/**
+ * Map Dodo subscription status to our DB status.
+ *
+ * Dodo statuses: pending, active, on_hold, cancelled, expired, failed
+ * Our DB CHECK: active, cancelled, past_due, trialing
+ *
+ * We map carefully:
+ * - active → active
+ * - cancelled / expired → cancelled
+ * - on_hold → past_due (suspended, not cancelled)
+ * - failed → cancelled (payment permanently failed)
+ * - pending → active (Dodo sends pending briefly before active; safe to activate)
+ */
+function mapStatus(
+  dodoStatus: string | undefined,
+  eventType: string,
+): "active" | "cancelled" | "past_due" {
+  // Event type is the source of truth when available
+  if (eventType === "subscription.cancelled") return "cancelled";
+  if (eventType === "subscription.expired") return "cancelled";
+  if (eventType === "subscription.failed") return "cancelled";
+  if (eventType === "subscription.on_hold") return "past_due";
+
+  // Fall back to payload status
   switch (dodoStatus) {
     case "cancelled":
     case "expired":
       return "cancelled";
-    case "past_due":
+    case "failed":
+      return "cancelled";
+    case "on_hold":
       return "past_due";
+    case "pending":
+      return "active"; // Dodo sends pending briefly; safe to treat as active
+    case "active":
     default:
       return "active";
   }
@@ -72,12 +117,21 @@ export async function POST(req: NextRequest) {
 
   const eventType: string = payload.type ?? payload.event_type ?? "";
   const data = payload.data ?? {};
+
+  // ── Only process subscription lifecycle events ──────────────────────
+  if (!SUBSCRIPTION_EVENT_TYPES.has(eventType)) {
+    // Acknowledge non-subscription events (payments, refunds, etc.) —
+    // we don't process them but return 200 so Dodo doesn't retry.
+    return NextResponse.json({ success: true, data: { eventType, action: "ignored" } });
+  }
+
+  // ── Extract fields from the subscription event payload ──────────────
   const externalId: string | undefined =
     data.subscription_id ?? data.id ?? data.entity_id;
   const productId: string | undefined =
     data.product_id ?? data.items?.[0]?.product_id ?? data.product?.id;
   const customerEmail: string | undefined =
-    data.customer?.email ?? data.customer_email ?? payload.data?.customer?.email;
+    data.customer?.email ?? data.customer_email;
   const metaUserId: string | undefined =
     data.metadata?.user_id ?? payload.metadata?.user_id;
 
@@ -104,10 +158,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const status = mapStatus(data.status ?? data.subscription_status);
+  const status = mapStatus(data.status ?? data.subscription_status, eventType);
   const plan = planSlugFromProductId(productId);
   if (!plan) {
-    console.error("[dodo webhook] unknown product_id:", productId);
+    console.error("[dodo webhook] unknown product_id:", productId, "eventType:", eventType);
     return NextResponse.json(
       { success: false, error: { code: "UNKNOWN_PRODUCT", message: `No plan mapping for product: ${productId}` } },
       { status: 500 }, // let Dodo retry — unknown product may need env config

@@ -29,10 +29,8 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     return errorResponse("INVALID_PLAN", "Unknown or free plan", 400);
   }
 
-  const returnUrl =
-    body.billing === "yearly"
-      ? process.env.DODO_PAYMENTS_RETURN_URL
-      : process.env.DODO_PAYMENTS_RETURN_URL;
+  const baseUrl = process.env.DODO_PAYMENTS_RETURN_URL ?? `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/settings`;
+  const returnUrl = baseUrl.includes("?") ? `${baseUrl}&checkout=success` : `${baseUrl}?checkout=success`;
 
   const { checkoutUrl, checkoutId } = await createCheckoutSession({
     userId: user.id,

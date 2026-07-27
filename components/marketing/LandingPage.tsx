@@ -1010,8 +1010,8 @@ public class NukeExample {
                   ) : (
                     <div>
                       <button
-                        onClick={() => goToCheckout(planSlug as "startup" | "business" | "enterprise")}
-                        disabled={checkoutLoading === planSlug}
+                        onClick={() => goToTrial(planSlug as "startup" | "business" | "enterprise")}
+                        disabled={trialLoading === planSlug || checkoutLoading === planSlug}
                         className={feat ? "bp" : isEnt ? "bp" : "bg"}
                         style={{
                           padding: "13px",
@@ -1021,27 +1021,26 @@ public class NukeExample {
                           ...(isEnt ? { background: PURPLE, color: "#fff" } : {}),
                         }}
                       >
-                        {checkoutLoading === planSlug ? "Loading…" : cta}
+                        {trialLoading === planSlug ? "Starting…" : `Start free trial`}
                       </button>
-                      <button
-                        onClick={() => goToTrial(planSlug as "startup" | "business" | "enterprise")}
-                        disabled={trialLoading === planSlug || checkoutLoading === planSlug}
-                        style={{
-                          marginTop: 8,
-                          padding: "8px",
-                          borderRadius: 6,
-                          fontSize: "12px",
-                          width: "100%",
-                          background: "transparent",
-                          border: `1px solid ${feat ? LIME : "#2a2a30"}`,
-                          color: feat ? LIME : "#606070",
-                          cursor: "pointer",
-                          fontFamily: "inherit",
-                          transition: "all .15s",
-                        }}
-                      >
-                        {trialLoading === planSlug ? "Starting…" : `Start free ${14}-day trial`}
-                      </button>
+                      <div style={{ textAlign: "center", marginTop: 8 }}>
+                        <button
+                          onClick={() => goToCheckout(planSlug as "startup" | "business" | "enterprise")}
+                          disabled={checkoutLoading === planSlug}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#505060",
+                            fontSize: "12px",
+                            cursor: "pointer",
+                            fontFamily: "inherit",
+                            textDecoration: "underline",
+                            textUnderlineOffset: "3px",
+                          }}
+                        >
+                          {checkoutLoading === planSlug ? "Loading…" : `or buy now at ${price}/mo`}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
