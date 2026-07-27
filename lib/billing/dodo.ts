@@ -57,7 +57,7 @@ export async function createCheckoutSession(
     method: "POST",
     headers: dodoAuthHeaders(),
     body: JSON.stringify({
-      product_cart: [{ product_id: productId }],
+      product_cart: [{ product_id: productId, quantity: 1 }],
       customer: { email: params.email },
       return_url: params.returnUrl ?? process.env.DODO_PAYMENTS_RETURN_URL,
       metadata: { user_id: params.userId },

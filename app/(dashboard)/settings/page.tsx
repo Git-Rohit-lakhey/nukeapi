@@ -200,12 +200,6 @@ export default function SettingsPage() {
       <p className="eyebrow">settings</p>
       <h1 style={{ fontSize: 30 }}>Plan & billing</h1>
 
-      {flash && (
-        <div className={flash.ok ? "flash flash-ok" : "flash flash-error"} style={{ marginTop: 16 }}>
-          {flash.msg}
-        </div>
-      )}
-
       <div className="card" style={{ marginTop: 20 }}>
         <div className="flex between items-center">
           <div>
@@ -229,6 +223,11 @@ export default function SettingsPage() {
       </div>
 
       <div style={{ marginTop: 16 }}>
+        {flash && (
+          <div className={flash.ok ? "flash flash-ok" : "flash flash-error"} style={{ marginBottom: 12 }}>
+            {flash.msg}
+          </div>
+        )}
         <PricingGrid mode="billing" currentPlan={plan} onSelect={upgrade} />
       </div>
 

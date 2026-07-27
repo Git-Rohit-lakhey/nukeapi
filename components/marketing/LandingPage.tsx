@@ -1180,8 +1180,8 @@ public class NukeExample {
       </section>
 
       {/* DEVELOPER ECOSYSTEM */}
-      <section id="developers" style={S.altBg}>
-        <div style={S.inner}>
+      <section id="developers" style={{ ...S.altBg }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto", padding: "0 6%" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
             <div style={S.eyebrow}>Developer ecosystem</div>
             <h2 style={{ ...S.h2, marginBottom: 10 }}>Use NukeAPI your way</h2>
@@ -1190,53 +1190,33 @@ public class NukeExample {
             </p>
           </div>
 
-          <style>{`
-            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%;max-width:960px;margin:0 auto}
-            .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px 20px;display:flex;flex-direction:column;transition:all .2s;width:100%;text-align:center;align-items:center}
-            .devcard:hover{border-color:#2c2c36;transform:translateY(-2px)}
-            .devcode{background:#08080a;border:1px solid #16161c;border-radius:10px;padding:16px;font-size:12px;line-height:1.7;color:#8080a0;overflow-x:auto;margin:0 0 16px;font-family:'SF Mono','Fira Code',monospace;text-align:left;width:100%}
-            .devlink{color:${LIME};font-size:14px;font-weight:600;text-decoration:none}
-            .devlink:hover{text-decoration:underline;text-underline-offset:4px}
-            @media(max-width:768px){.devg{grid-template-columns:1fr!important}}
-          `}</style>
-
-          <div className="devg">
-            {/* SDK */}
-            <div className="devcard">
-              <div style={{ fontSize: "22px", marginBottom: 12 }}>📦</div>
-              <div style={{ fontSize: "16px", fontWeight: 800, marginBottom: 8 }}>Official SDK</div>
-              <p style={{ fontSize: "14px", color: "#505060", lineHeight: 1.75, marginBottom: 18, flex: 1 }}>
-                Typed TypeScript SDK for Node & browser. Delete a user across every connected integration in three lines.
-              </p>
-              <pre className="devcode">{`npm install @nukeapi/sdk
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18, maxWidth: 960, margin: "0 auto" }}>
+            {[
+              {
+                icon: "📦",
+                title: "Official SDK",
+                desc: "Typed TypeScript SDK for Node & browser. Delete a user across every connected integration in three lines.",
+                code: `npm install @nukeapi/sdk
 
 import { NukeAPI } from '@nukeapi/sdk'
 
 const nuke = new NukeAPI({ apiKey: 'nk_live_...' })
-await nuke.deleteUser({ subject_email, integrations })`}</pre>
-              <Link href="/docs" className="devlink">SDK docs →</Link>
-            </div>
-
-            {/* n8n */}
-            <div className="devcard">
-              <div style={{ fontSize: "22px", marginBottom: 12 }}>🔗</div>
-              <div style={{ fontSize: "16px", fontWeight: 800, marginBottom: 8 }}>n8n node</div>
-              <p style={{ fontSize: "14px", color: "#505060", lineHeight: 1.75, marginBottom: 18, flex: 1 }}>
-                Drop NukeAPI into any n8n workflow — no code. Connect your API key, pick integrations, run.
-              </p>
-              <pre className="devcode">{`npm install n8n-nodes-nukeapi
-# or copy the built folder into ~/.n8n/custom`}</pre>
-              <Link href="/docs" className="devlink">n8n docs →</Link>
-            </div>
-
-            {/* MCP */}
-            <div className="devcard">
-              <div style={{ fontSize: "22px", marginBottom: 12 }}>🤖</div>
-              <div style={{ fontSize: "16px", fontWeight: 800, marginBottom: 8 }}>MCP server</div>
-              <p style={{ fontSize: "14px", color: "#505060", lineHeight: 1.75, marginBottom: 18, flex: 1 }}>
-                Let Claude Desktop or Cursor delete users for you via the Model Context Protocol.
-              </p>
-              <pre className="devcode">{`{
+await nuke.deleteUser({ subject_email, integrations })`,
+                link: "SDK docs →",
+              },
+              {
+                icon: "🔗",
+                title: "n8n node",
+                desc: "Drop NukeAPI into any n8n workflow — no code. Connect your API key, pick integrations, run.",
+                code: `npm install n8n-nodes-nukeapi
+# or copy the built folder into ~/.n8n/custom`,
+                link: "n8n docs →",
+              },
+              {
+                icon: "🤖",
+                title: "MCP server",
+                desc: "Let Claude Desktop or Cursor delete users for you via the Model Context Protocol.",
+                code: `{
   "mcpServers": {
     "nukeapi": {
       "command": "npx",
@@ -1247,9 +1227,48 @@ await nuke.deleteUser({ subject_email, integrations })`}</pre>
       }
     }
   }
-}`}</pre>
-              <Link href="/docs" className="devlink">MCP docs →</Link>
-            </div>
+}`,
+                link: "MCP docs →",
+              },
+            ].map((card) => (
+              <div
+                key={card.title}
+                style={{
+                  background: "#0d0d10",
+                  border: "1px solid #1e1e24",
+                  borderRadius: 16,
+                  padding: "28px 20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "center",
+                  alignItems: "center",
+                  transition: "all .2s",
+                }}
+              >
+                <div style={{ fontSize: "22px", marginBottom: 12 }}>{card.icon}</div>
+                <div style={{ fontSize: "16px", fontWeight: 800, marginBottom: 8 }}>{card.title}</div>
+                <p style={{ fontSize: "14px", color: "#505060", lineHeight: 1.75, marginBottom: 18, flex: 1 }}>
+                  {card.desc}
+                </p>
+                <pre style={{
+                  background: "#08080a",
+                  border: "1px solid #16161c",
+                  borderRadius: 10,
+                  padding: 16,
+                  fontSize: 12,
+                  lineHeight: 1.7,
+                  color: "#8080a0",
+                  overflowX: "auto",
+                  marginBottom: 16,
+                  fontFamily: "'SF Mono','Fira Code',monospace",
+                  textAlign: "left",
+                  width: "100%",
+                }}>{card.code}</pre>
+                <Link href="/docs" style={{ color: LIME, fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+                  {card.link}
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </section>
