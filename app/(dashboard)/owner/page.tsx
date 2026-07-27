@@ -41,6 +41,12 @@ export default async function OwnerPage() {
     .order("user_id")
     .limit(25);
 
+  const { data: recentFeedback } = await admin
+    .from("feedback")
+    .select("id, user_id, message, page, created_at")
+    .order("created_at", { ascending: false })
+    .limit(20);
+
   return (
     <div>
       <p className="eyebrow">owner</p>
@@ -93,6 +99,37 @@ export default async function OwnerPage() {
       </div>
 
       <OwnerConnectors />
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <h3 style={{ fontSize: 16 }}>Recent feedback</h3>
+        {(!recentFeedback || recentFeedback.length === 0) && (
+          <p className="dim" style={{ fontSize: 13, marginTop: 8 }}>No feedback submitted yet.</p>
+        )}
+        {recentFeedback && recentFeedback.length > 0 && (
+          <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+            {recentFeedback.map((fb) => (
+              <div
+                key={fb.id}
+                className="card"
+                style={{ padding: 14, background: "var(--s1)" }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span className="mono" style={{ fontSize: 11, color: "var(--t3)" }}>
+                    {fb.user_id ? fb.user_id.slice(0, 8) : "guest"}
+                  </span>
+                  {fb.page && (
+                    <span className="badge" style={{ fontSize: 10 }}>{fb.page}</span>
+                  )}
+                  <span className="mono" style={{ fontSize: 10, color: "var(--t4)", marginLeft: "auto" }}>
+                    {new Date(fb.created_at).toLocaleString()}
+                  </span>
+                </div>
+                <div style={{ fontSize: 13, lineHeight: 1.6 }}>{fb.message}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

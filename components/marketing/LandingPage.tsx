@@ -48,13 +48,21 @@ export default function LandingPage() {
       } else if (res.status === 401) {
         window.location.assign(`/signup?plan=${plan}&yearly=${yearly}`);
       } else {
+        const errMsg = data?.error?.message || data?.error || "Checkout unavailable";
         setCheckoutError(
-          data?.error ?? "Checkout unavailable. Please try again or contact hello@nukeapi.dev",
+          errMsg.includes("not configured")
+            ? "Billing is not configured yet. Please contact hello@nukeapi.dev"
+            : `${errMsg}. Please try again or contact hello@nukeapi.dev`,
         );
         setCheckoutLoading(null);
       }
-    } catch {
-      setCheckoutError("Something went wrong. Please try again.");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Something went wrong";
+      if (msg.includes("Supabase env")) {
+        window.location.assign(`/signup?plan=${plan}&yearly=${yearly}`);
+      } else {
+        setCheckoutError("Something went wrong. Please try again.");
+      }
       setCheckoutLoading(null);
     }
   }
@@ -303,7 +311,7 @@ public class NukeExample {
     { n: "Okta", tag: "Auth", live: false },
     { n: "Stytch", tag: "Auth", live: false },
     { n: "Turso", tag: "Database", live: false },
-    { n: "Redis", tag: "Database", live: false },
+    { n: "Upstash Redis", tag: "Database", live: false },
     { n: "Elasticsearch", tag: "Search", live: false },
     { n: "Cassandra", tag: "Database", live: false },
     { n: "WorkOS", tag: "Auth", live: false },
@@ -340,6 +348,9 @@ public class NukeExample {
     { n: "Braze", tag: "Marketing", live: false },
     { n: "Iterable", tag: "Marketing", live: false },
     { n: "Vero", tag: "Marketing", live: false },
+    { n: "Passage (1Password)", tag: "Auth", live: false },
+    { n: "Substack", tag: "Email", live: false },
+    { n: "June", tag: "Analytics", live: false },
   ];
 
   const isLive = (name: string): boolean => {
@@ -409,7 +420,7 @@ public class NukeExample {
         .pc.feat{border-color:rgba(200,241,53,.45);background:#0d1600}
         .pill{background:#111114;border:1px solid #1e1e24;border-radius:100px;padding:10px 20px;font-size:14px;display:flex;align-items:center;gap:10px;transition:all .15s}
         .pill:hover{border-color:rgba(200,241,53,.35)}
-        .tab{background:transparent;border:none;cursor:pointer;font-family:inherit;font-size:12px;padding:12px 16px;letter-spacing:.04em;color:#444;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+        .tab{background:transparent;border:none;cursor:pointer;font-family:inherit;font-size:11px;padding:10px 10px;letter-spacing:.04em;color:#444;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
         .tab.on{color:${LIME};border-bottom-color:${LIME}}
         @media(max-width:768px){.g2,.g3,.fg{grid-template-columns:1fr!important}.nl{display:none!important}}
       `}</style>
@@ -663,7 +674,7 @@ public class NukeExample {
       {/* CODE DEMO */}
       <section style={S.altBg}>
         <div style={S.inner}>
-          <div className="g2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          <div className="g2" style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 48, alignItems: "center" }}>
             <div>
               <div style={S.eyebrow}>The API</div>
               <h2 style={S.h2}>One endpoint.<br />Every integration.</h2>
@@ -687,7 +698,7 @@ public class NukeExample {
             </div>
 
             <div style={{ background: "#0d0d10", border: "1px solid #1e1e24", borderRadius: 16, overflow: "hidden" }}>
-              <div style={{ display: "flex", borderBottom: "1px solid #181820", padding: "0 4px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", borderBottom: "1px solid #181820", padding: "0 4px" }}>
                 {(["curl", "node", "python", "go", "rust", "php", "ruby", "java"] as const).map((t) => (
                   <button key={t} className={`tab${activeTab === t ? " on" : ""}`} onClick={() => setActiveTab(t)}>
                     {t}
@@ -1180,8 +1191,8 @@ public class NukeExample {
           </div>
 
           <style>{`
-            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:0 auto}
-            .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px;display:flex;flex-direction:column;transition:all .2s;width:100%;text-align:center;align-items:center}
+            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%;max-width:960px;margin:0 auto}
+            .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px 20px;display:flex;flex-direction:column;transition:all .2s;width:100%;text-align:center;align-items:center}
             .devcard:hover{border-color:#2c2c36;transform:translateY(-2px)}
             .devcode{background:#08080a;border:1px solid #16161c;border-radius:10px;padding:16px;font-size:12px;line-height:1.7;color:#8080a0;overflow-x:auto;margin:0 0 16px;font-family:'SF Mono','Fira Code',monospace;text-align:left;width:100%}
             .devlink{color:${LIME};font-size:14px;font-weight:600;text-decoration:none}
