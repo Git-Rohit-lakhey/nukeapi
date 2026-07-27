@@ -10,6 +10,7 @@ interface SubRow {
   status: string;
   external_subscription_id: string | null;
   current_period_end: string | null;
+  trial_ends_at: string | null;
 }
 
 interface NotifState {
@@ -47,7 +48,7 @@ export default function SettingsPage() {
     const supabase = getSupabaseBrowser();
     const { data } = await supabase
       .from("subscriptions")
-      .select("plan,status,external_subscription_id,current_period_end")
+      .select("plan,status,external_subscription_id,current_period_end,trial_ends_at")
       .maybeSingle();
     setSub((data as SubRow) ?? null);
   }
@@ -207,15 +208,35 @@ export default function SettingsPage() {
             <h3 style={{ fontSize: 22, margin: "4px 0" }}>
               {PLANS[plan as keyof typeof PLANS]?.label ?? plan}
             </h3>
-            <span className="badge badge-lime">{sub?.status ?? "active"}</span>
+            {sub?.status === "trialing" ? (
+              <span className="badge" style={{ background: "rgba(168,85,247,0.15)", color: "#a855f7" }}>
+                TRIAL{sub?.trial_ends_at
+                  ? ` · ${Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} days left`
+                  : ""}
+              </span>
+            ) : (
+              <span className="badge badge-lime">{sub?.status ?? "active"}</span>
+            )}
           </div>
-          {sub?.external_subscription_id && sub?.status !== "cancelled" && (
+          {sub?.status === "trialing" && sub?.trial_ends_at && (
+            <div style={{ textAlign: "right" }}>
+              <p className="dim" style={{ fontSize: 12, margin: 0 }}>
+                Trial ends {new Date(sub.trial_ends_at).toLocaleDateString()}
+              </p>
+            </div>
+          )}
+          {sub?.external_subscription_id && sub?.status !== "cancelled" && sub?.status !== "trialing" && (
             <button className="btn btn-danger" disabled={busy} onClick={cancel}>
               Cancel subscription
             </button>
           )}
         </div>
-        {sub?.current_period_end && (
+        {sub?.status === "trialing" && sub?.trial_ends_at && (
+          <p className="dim" style={{ fontSize: 13, marginTop: 8 }}>
+            Your trial ends on {new Date(sub.trial_ends_at).toLocaleDateString()}. Upgrade anytime to keep access.
+          </p>
+        )}
+        {sub?.current_period_end && sub?.status !== "trialing" && (
           <p className="dim" style={{ fontSize: 13, marginTop: 8 }}>
             Period ends {new Date(sub.current_period_end).toLocaleDateString()}
           </p>

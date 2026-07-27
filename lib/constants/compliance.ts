@@ -110,6 +110,16 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
 
 export const ALL_PLAN_SLUGS = Object.keys(PLANS) as PlanSlug[];
 
+/** Free trial duration in days. Applies to all paid tiers. */
+export const TRIAL_DURATION_DAYS = 14;
+
+/** Paid plan slugs that support free trials (all of them). */
+export const TRIAL_ELIGIBLE_PLANS: PlanSlug[] = [
+  "startup", "startup_yearly",
+  "business", "business_yearly",
+  "enterprise", "enterprise_yearly",
+];
+
 export const FREE_INTEGRATIONS: Integration[] =
   (PLANS.free.allowedIntegrations as Integration[]) ?? [];
 

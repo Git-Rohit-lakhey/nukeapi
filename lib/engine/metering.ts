@@ -2,15 +2,36 @@ import "server-only";
 import { getSupabaseAdmin } from "@/lib/db/supabase";
 import { getPlanLimits } from "@/lib/constants/compliance";
 
-/** Resolve the user's current plan slug (defaults to 'free'). */
+/** Resolve the user's current plan slug (defaults to 'free').
+ *  If the user is on a 'trialing' subscription that has expired,
+ *  auto-downgrade them to 'free' and update the DB. */
 export async function getPlanForUser(userId: string): Promise<string> {
   const admin = getSupabaseAdmin();
   const { data, error } = await admin
     .from("subscriptions")
-    .select("plan,status")
+    .select("plan,status,trial_ends_at")
     .eq("user_id", userId)
     .maybeSingle();
   if (error || !data) return "free";
+
+  // If on a trial that has expired, downgrade to free
+  if (data.status === "trialing" && data.trial_ends_at) {
+    const endsAt = new Date(data.trial_ends_at);
+    if (endsAt <= new Date()) {
+      // Trial expired — downgrade to free
+      await admin
+        .from("subscriptions")
+        .update({
+          plan: "free",
+          status: "active",
+          trial_ends_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId);
+      return "free";
+    }
+  }
+
   return data.plan;
 }
 

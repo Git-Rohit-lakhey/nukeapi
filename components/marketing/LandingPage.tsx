@@ -15,6 +15,7 @@ export default function LandingPage() {
   const [yearly, setYearly] = useState(false); // reference: monthly default
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [trialLoading, setTrialLoading] = useState<string | null>(null);
   // Live connector availability from the owner-controlled flags. Until the
   // fetch resolves we fall back to the static `live` defaults below.
   const [liveOverrides, setLiveOverrides] = useState<Record<string, boolean>>({});
@@ -64,6 +65,34 @@ export default function LandingPage() {
         setCheckoutError("Something went wrong. Please try again.");
       }
       setCheckoutLoading(null);
+    }
+  }
+
+  async function goToTrial(plan: "startup" | "business" | "enterprise") {
+    setTrialLoading(plan);
+    setCheckoutError(null);
+    try {
+      const sb = getSupabaseBrowser();
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.assign(`/signup?plan=${plan}&trial=true`);
+        return;
+      }
+      const res = await fetch("/api/v1/trial/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.assign("/settings");
+      } else {
+        setCheckoutError(data?.error?.message ?? "Could not start trial");
+        setTrialLoading(null);
+      }
+    } catch {
+      setCheckoutError("Something went wrong. Please try again.");
+      setTrialLoading(null);
     }
   }
 
@@ -979,20 +1008,41 @@ public class NukeExample {
                       </button>
                     </Link>
                   ) : (
-                    <button
-                      onClick={() => goToCheckout(planSlug as "startup" | "business" | "enterprise")}
-                      disabled={checkoutLoading === planSlug}
-                      className={feat ? "bp" : isEnt ? "bp" : "bg"}
-                      style={{
-                        padding: "13px",
-                        borderRadius: 8,
-                        fontSize: "14px",
-                        width: "100%",
-                        ...(isEnt ? { background: PURPLE, color: "#fff" } : {}),
-                      }}
-                    >
-                      {checkoutLoading === planSlug ? "Loading…" : cta}
-                    </button>
+                    <div>
+                      <button
+                        onClick={() => goToCheckout(planSlug as "startup" | "business" | "enterprise")}
+                        disabled={checkoutLoading === planSlug}
+                        className={feat ? "bp" : isEnt ? "bp" : "bg"}
+                        style={{
+                          padding: "13px",
+                          borderRadius: 8,
+                          fontSize: "14px",
+                          width: "100%",
+                          ...(isEnt ? { background: PURPLE, color: "#fff" } : {}),
+                        }}
+                      >
+                        {checkoutLoading === planSlug ? "Loading…" : cta}
+                      </button>
+                      <button
+                        onClick={() => goToTrial(planSlug as "startup" | "business" | "enterprise")}
+                        disabled={trialLoading === planSlug || checkoutLoading === planSlug}
+                        style={{
+                          marginTop: 8,
+                          padding: "8px",
+                          borderRadius: 6,
+                          fontSize: "12px",
+                          width: "100%",
+                          background: "transparent",
+                          border: `1px solid ${feat ? LIME : "#2a2a30"}`,
+                          color: feat ? LIME : "#606070",
+                          cursor: "pointer",
+                          fontFamily: "inherit",
+                          transition: "all .15s",
+                        }}
+                      >
+                        {trialLoading === planSlug ? "Starting…" : `Start free ${14}-day trial`}
+                      </button>
+                    </div>
                   )}
                 </div>
               );
