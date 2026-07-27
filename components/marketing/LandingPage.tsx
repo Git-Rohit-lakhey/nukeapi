@@ -767,6 +767,15 @@ async fn main() {
               Show all {INTEGRATIONS.length} integrations →
             </button>
           )}
+          {showAllIntegrations && (
+            <button
+              onClick={() => setShowAllIntegrations(false)}
+              className="btn"
+              style={{ marginBottom: 20 }}
+            >
+              Show less ↑
+            </button>
+          )}
           <p style={{ fontSize: "14px", color: "#383840", marginTop: showAllIntegrations ? 20 : 0 }}>
             Need a custom integration?{" "}
             <a href="mailto:hello@nukeapi.dev" style={{ color: LIME, textDecoration: "underline", textUnderlineOffset: 4 }}>
@@ -1117,10 +1126,10 @@ async fn main() {
           </div>
 
           <style>{`
-            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;justify-items:center}
-            .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px;display:flex;flex-direction:column;transition:all .2s;width:100%}
+            .devg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;justify-items:center;max-width:960px;margin:0 auto}
+            .devcard{background:#0d0d10;border:1px solid #1e1e24;border-radius:16px;padding:28px;display:flex;flex-direction:column;transition:all .2s;width:100%;text-align:center;align-items:center}
             .devcard:hover{border-color:#2c2c36;transform:translateY(-2px)}
-            .devcode{background:#08080a;border:1px solid #16161c;border-radius:10px;padding:16px;font-size:12px;line-height:1.7;color:#8080a0;overflow-x:auto;margin:0 0 16px;font-family:'SF Mono','Fira Code',monospace}
+            .devcode{background:#08080a;border:1px solid #16161c;border-radius:10px;padding:16px;font-size:12px;line-height:1.7;color:#8080a0;overflow-x:auto;margin:0 0 16px;font-family:'SF Mono','Fira Code',monospace;text-align:left;width:100%}
             .devlink{color:${LIME};font-size:14px;font-weight:600;text-decoration:none}
             .devlink:hover{text-decoration:underline;text-underline-offset:4px}
             @media(max-width:768px){.devg{grid-template-columns:1fr!important}}

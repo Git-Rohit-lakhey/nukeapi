@@ -109,6 +109,53 @@ res = requests.post(
     }
 )
 print(res.json()['data']['status'])  # "completed"`,
+  go: `package main
+
+import (
+  "bytes"
+  "encoding/json"
+  "fmt"
+  "net/http"
+)
+
+func main() {
+  body, _ := json.Marshal(map[string]any{
+    "subject_email": "user@example.com",
+    "integrations":  []string{"mailchimp", "hubspot", "intercom"},
+  })
+  req, _ := http.NewRequest("POST",
+    "https://nukeapi.dev/api/v1/delete-user",
+    bytes.NewReader(body),
+  )
+  req.Header.Set("Authorization", "Bearer nk_live_••••••••")
+  req.Header.Set("Content-Type", "application/json")
+
+  resp, _ := http.DefaultClient.Do(req)
+  defer resp.Body.Close()
+  var result map[string]any
+  json.NewDecoder(resp.Body).Decode(&result)
+  fmt.Println(result["data"].(map[string]any)["status"]) // completed
+}`,
+  rust: `use reqwest::Client;
+use serde_json::json;
+
+#[tokio::main]
+async fn main() {
+    let client = Client::new();
+    let resp = client
+        .post("https://nukeapi.dev/api/v1/delete-user")
+        .bearer_auth("nk_live_••••••••")
+        .json(&json!({
+            "subject_email": "user@example.com",
+            "integrations": ["mailchimp", "hubspot", "intercom"]
+        }))
+        .send()
+        .await
+        .unwrap();
+
+    let data: serde_json::Value = resp.json().await.unwrap();
+    println!("{}", data["data"]["status"]); // "completed"
+}`,
 }
 
 export default function DocsPage() {
