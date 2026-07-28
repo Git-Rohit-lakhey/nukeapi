@@ -62,17 +62,6 @@ function ToggleSwitch({
           transition: "transform 0.15s, background 0.15s",
         }}
       />
-      <span
-        style={{
-          width: 18,
-          height: 18,
-          borderRadius: "50%",
-          background: on ? "var(--lime)" : "var(--t3)",
-          marginLeft: -28,
-          transform: on ? "translateX(28px)" : "translateX(0)",
-          transition: "transform 0.15s, background 0.15s",
-        }}
-      />
     </button>
   );
 }

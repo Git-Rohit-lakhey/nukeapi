@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/db/supabase";
 import { Logo } from "@/components/Logo";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { SignOutButton } from "@/components/dashboard/SignOutButton";
+import { PendingTrialGuard } from "@/components/dashboard/PendingTrialGuard";
 
 export default async function DashboardLayout({
   children,
@@ -20,6 +21,7 @@ export default async function DashboardLayout({
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
+      <PendingTrialGuard />
       <aside
         style={{
           width: 232,

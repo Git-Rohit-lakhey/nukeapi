@@ -44,6 +44,7 @@ export default function SettingsPage() {
   const [ssoBusy, setSsoBusy] = useState(false);
   const [ssoMsg, setSsoMsg] = useState<{ ok: boolean; msg: string } | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const subRef = useRef<SubRow | null>(null);
 
   const load = useCallback(async () => {
     const supabase = getSupabaseBrowser();
@@ -51,7 +52,9 @@ export default function SettingsPage() {
       .from("subscriptions")
       .select("plan,status,external_subscription_id,current_period_end,trial_ends_at")
       .maybeSingle();
-    setSub((data as SubRow) ?? null);
+    const row = (data as SubRow) ?? null;
+    subRef.current = row;
+    setSub(row);
   }, []);
 
   async function loadNotif() {
@@ -104,12 +107,14 @@ export default function SettingsPage() {
       pollRef.current = setInterval(async () => {
         attempts++;
         await load();
-        // Stop polling once we have a paid plan or after 30 seconds
-        if ((sub && sub.plan !== "free") || attempts >= 15) {
+        const current = subRef.current;
+        if ((current && current.plan !== "free") || attempts >= 15) {
           if (pollRef.current) clearInterval(pollRef.current);
-          if (sub && sub.plan !== "free") {
-            setFlash({ ok: true, msg: "Subscription activated! Refreshing…" });
-            setTimeout(() => setFlash(null), 2000);
+          if (current && current.plan !== "free") {
+            setFlash({ ok: true, msg: "Subscription activated!" });
+            setTimeout(() => setFlash(null), 3000);
+          } else if (attempts >= 15) {
+            setFlash({ ok: false, msg: "Subscription may still be processing. Refresh in a moment." });
           }
         }
       }, 2000);
@@ -352,7 +357,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {plan === "enterprise" && (
+      {(plan === "enterprise" || plan === "enterprise_yearly") && (
         <div className="card" style={{ marginTop: 16, borderColor: "var(--violet-10, rgba(168,85,247,.4))" }}>
           <h3 style={{ fontSize: 16 }}>SSO / SAML</h3>
           <p className="dim" style={{ fontSize: 13, marginTop: 4 }}>

@@ -18,6 +18,16 @@ export default function SignupPage() {
     setLoading(true);
     const supabase = getSupabaseBrowser();
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+    const params = new URLSearchParams(window.location.search);
+    const trialPlan = params.get("plan");
+    const isTrial = params.get("trial") === "true";
+
+    // Persist trial intent across email confirmation redirect
+    if (trialPlan && isTrial) {
+      localStorage.setItem("pending_trial", trialPlan);
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -29,8 +39,27 @@ export default function SignupPage() {
       return;
     }
     if (data.session) {
-      router.push("/dashboard");
-      router.refresh();
+      const effectivePlan = trialPlan ?? localStorage.getItem("pending_trial");
+      const effectiveTrial = isTrial || !!localStorage.getItem("pending_trial");
+      localStorage.removeItem("pending_trial");
+      if (effectivePlan && effectiveTrial) {
+        // Logged-in user — start trial immediately
+        try {
+          const res = await fetch("/api/v1/trial/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ plan: effectivePlan }),
+          });
+          const result = await res.json();
+          if (result.success) {
+            window.location.assign("/settings");
+            return;
+          }
+        } catch {
+          // Fall through to dashboard
+        }
+      }
+      window.location.assign("/dashboard");
     } else {
       setFlash({
         ok: true,

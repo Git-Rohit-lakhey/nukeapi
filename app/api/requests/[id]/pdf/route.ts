@@ -35,7 +35,7 @@ export async function GET(
 
   const { data: req, error: reqErr } = await admin
     .from("deletion_requests")
-    .select("id,subject_email,status,started_at,completed_at,audit_signature")
+    .select("id,subject_email,status,created_at,completed_at,audit_signature")
     .eq("id", id)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -51,8 +51,8 @@ export async function GET(
     requestId: req.id,
     subjectEmail: req.subject_email,
     status: req.status,
-    startedAt: req.started_at,
-    completedAt: req.completed_at ?? req.started_at,
+    startedAt: req.created_at,
+    completedAt: req.completed_at ?? req.created_at,
     results: (logs ?? []).map((l) => ({
       integration: l.integration,
       status: l.status,

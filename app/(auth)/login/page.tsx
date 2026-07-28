@@ -23,8 +23,31 @@ export default function LoginPage() {
       setFlash({ ok: false, msg: error.message });
       return;
     }
-    router.push("/dashboard");
-    router.refresh();
+
+    // Check for trial params from landing page redirect or localStorage
+    const params = new URLSearchParams(window.location.search);
+    const trialPlan = params.get("plan") ?? localStorage.getItem("pending_trial");
+    const isTrial = params.get("trial") === "true" || !!localStorage.getItem("pending_trial");
+
+    if (trialPlan && isTrial) {
+      localStorage.removeItem("pending_trial");
+      try {
+        const res = await fetch("/api/v1/trial/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: trialPlan }),
+        });
+        const result = await res.json();
+        if (result.success) {
+          window.location.assign("/settings");
+          return;
+        }
+      } catch {
+        // Fall through to dashboard
+      }
+    }
+
+    window.location.assign("/dashboard");
   }
 
   return (

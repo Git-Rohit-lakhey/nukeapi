@@ -84,15 +84,19 @@ export async function setConnectorFlag(
     .eq("integration", integration);
   if (error) throw new Error(`connector_flag update failed: ${error.message}`);
 
-  // Always keep a paper trail of who flipped what, when.
-  await admin.from("admin_audit").insert({
-    action: "connector_flag_toggle",
-    actor_id: actorId,
-    target: integration,
-    before: { enabled: !enabled },
-    after: { enabled },
-    created_at: new Date().toISOString(),
-  });
+  // Always keep a paper trail of who flipped what, when (best-effort).
+  try {
+    await admin.from("admin_audit").insert({
+      action: "connector_flag_toggle",
+      actor_id: actorId,
+      target: integration,
+      before: { enabled: !enabled },
+      after: { enabled },
+      created_at: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error("[flags] admin_audit insert failed (flag toggle):", e);
+  }
 }
 
 /** Put a connector into (or take it out of) maintenance mode. */
@@ -113,14 +117,18 @@ export async function setConnectorMaintenance(
     .eq("integration", integration);
   if (error) throw new Error(`connector_maintenance update failed: ${error.message}`);
 
-  await admin.from("admin_audit").insert({
-    action: "connector_maintenance_toggle",
-    actor_id: actorId,
-    target: integration,
-    before: { maintenance: !maintenance },
-    after: { maintenance },
-    created_at: new Date().toISOString(),
-  });
+  try {
+    await admin.from("admin_audit").insert({
+      action: "connector_maintenance_toggle",
+      actor_id: actorId,
+      target: integration,
+      before: { maintenance: !maintenance },
+      after: { maintenance },
+      created_at: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error("[flags] admin_audit insert failed (maintenance toggle):", e);
+  }
 }
 
 /** Hide or reveal a connector from the client catalog / marketing site. */
@@ -141,14 +149,18 @@ export async function setConnectorHidden(
     .eq("integration", integration);
   if (error) throw new Error(`connector_hidden update failed: ${error.message}`);
 
-  await admin.from("admin_audit").insert({
-    action: "connector_hidden_toggle",
-    actor_id: actorId,
-    target: integration,
-    before: { hidden: !hidden },
-    after: { hidden },
-    created_at: new Date().toISOString(),
-  });
+  try {
+    await admin.from("admin_audit").insert({
+      action: "connector_hidden_toggle",
+      actor_id: actorId,
+      target: integration,
+      before: { hidden: !hidden },
+      after: { hidden },
+      created_at: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error("[flags] admin_audit insert failed (hidden toggle):", e);
+  }
 }
 
 /**
@@ -197,14 +209,18 @@ export async function grantCustomIntegration(
     { onConflict: "user_id,integration" },
   );
   if (error) throw new Error(`custom grant failed: ${error.message}`);
-  await admin.from("admin_audit").insert({
-    action: "custom_connector_grant",
-    actor_id: actorId,
-    target: integration,
-    before: { granted: false },
-    after: { granted: true, user_id: userId },
-    created_at: new Date().toISOString(),
-  });
+  try {
+    await admin.from("admin_audit").insert({
+      action: "custom_connector_grant",
+      actor_id: actorId,
+      target: integration,
+      before: { granted: false },
+      after: { granted: true, user_id: userId },
+      created_at: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error("[flags] admin_audit insert failed (custom grant):", e);
+  }
 }
 
 /** Revoke a connector grant from a specific user (owner action, audited). */
@@ -220,14 +236,18 @@ export async function revokeCustomIntegration(
     .eq("user_id", userId)
     .eq("integration", integration);
   if (error) throw new Error(`custom revoke failed: ${error.message}`);
-  await admin.from("admin_audit").insert({
-    action: "custom_connector_revoke",
-    actor_id: actorId,
-    target: integration,
-    before: { granted: true, user_id: userId },
-    after: { granted: false },
-    created_at: new Date().toISOString(),
-  });
+  try {
+    await admin.from("admin_audit").insert({
+      action: "custom_connector_revoke",
+      actor_id: actorId,
+      target: integration,
+      before: { granted: true, user_id: userId },
+      after: { granted: false },
+      created_at: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error("[flags] admin_audit insert failed (custom revoke):", e);
+  }
 }
 
 /** List every active custom grant (owner UI). */

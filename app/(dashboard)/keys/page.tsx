@@ -55,7 +55,8 @@ export default function KeysPage() {
     await load();
   }
 
-  async function revoke(id: string) {
+  async function revoke(id: string, keyName: string) {
+    if (!confirm(`Revoke key "${keyName}"? This cannot be undone.`)) return;
     const supabase = getSupabaseBrowser();
     const { error } = await supabase.from("api_keys").delete().eq("id", id);
     if (error) {
@@ -129,7 +130,7 @@ export default function KeysPage() {
                     {k.last_used_at ? new Date(k.last_used_at).toLocaleDateString() : "never"}
                   </td>
                   <td>
-                    <button className="btn btn-sm btn-danger" onClick={() => revoke(k.id)}>
+                    <button className="btn btn-sm btn-danger" onClick={() => revoke(k.id, k.name)}>
                       Revoke
                     </button>
                   </td>
