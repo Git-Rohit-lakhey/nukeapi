@@ -60,14 +60,15 @@ export function SiteNav() {
           ))}
         </div>
 
-        <div style={{ display: "flex", gap: 10 }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <span className="badge badge-lime" style={{ marginRight: 2 }}><span className="dot" />test mode</span>
           <Link href="/login">
-            <button className="bg" style={{ padding: "9px 20px", borderRadius: 8, fontSize: "14px" }}>
+            <button className="bg" style={{ padding: "9px 18px", borderRadius: 9, fontSize: "13.5px", fontWeight: 600 }}>
               Sign in
             </button>
           </Link>
           <Link href="/signup">
-            <button className="bp" style={{ padding: "9px 20px", borderRadius: 8, fontSize: "14px" }}>
+            <button className="bp" style={{ padding: "9px 18px", borderRadius: 9, fontSize: "13.5px" }}>
               Get API key
             </button>
           </Link>
@@ -76,8 +77,8 @@ export function SiteNav() {
 
       <style>{`
         .nav-link {
-          color: #555; font-size: 14px; text-decoration: none;
-          transition: color .15s; cursor: pointer;
+          color: #9a9aa5; font-size: 13.5px; font-weight: 500; text-decoration: none;
+          transition: color .15s; cursor: pointer; letter-spacing: .01em;
         }
         .nav-link:hover { color: var(--lime); }
         @media (max-width: 768px) { .nl { display: none !important; } }
@@ -98,23 +99,24 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer style={{ padding: "40px 6%", borderTop: "1px solid #121218", background: "#080809" }}>
+    <footer style={{ padding: "48px 6% 32px", borderTop: "1px solid #121218", background: "#080809" }}>
       <div
         style={{
           maxWidth: 1080,
           margin: "0 auto",
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
           flexWrap: "wrap",
-          gap: 20,
+          gap: 28,
         }}
       >
-        <div>
-          <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>
+        <div style={{ maxWidth: 300 }}>
+          <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>
             <span style={{ color: "var(--lime)" }}>Nuke</span>API
           </div>
-          <div style={{ fontSize: 12, color: "#282830" }}>GDPR · CCPA · Data deletion API</div>
+          <div style={{ fontSize: 12.5, color: "#55555f", lineHeight: 1.7 }}>One API call deletes a user everywhere. GDPR · CCPA · LGPD with signed PDF proof.</div>
+          <div style={{ marginTop: 12 }}><span className="badge badge-lime"><span className="dot" />all systems operational</span></div>
         </div>
         <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#383840", flexWrap: "wrap" }}>
           {FOOTER_LINKS.map(([label, href]) => (

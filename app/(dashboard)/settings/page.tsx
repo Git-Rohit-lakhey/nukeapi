@@ -89,41 +89,54 @@ export default function SettingsPage() {
   const currentPlan = sub?.plan ?? "free";
   const isPaid = currentPlan !== "free" && sub?.status === "active";
 
+  const pct = !usage ? 0 : usage.limit === Infinity ? 100 : usage.limit === 0 ? 0 : Math.min(100, Math.round((usage.used / usage.limit) * 100));
+
   return (
-    <div>
-      <h1 style={{ fontSize: 26, marginBottom: 6 }}>Settings & billing</h1>
-      <p className="muted" style={{ marginBottom: 24 }}>Manage your plan, usage and account. Test mode — use Dodo test card 4242 4242 4242 4242.</p>
+    <div className="anim-fadeUp">
+      <p className="eyebrow">settings · billing</p>
+      <h1 style={{ fontSize: 30, marginBottom: 6 }}>Settings & billing</h1>
+      <p className="muted" style={{ marginBottom: 22, fontSize: 13.5 }}>Manage your plan, usage and account. <span className="badge badge-lime" style={{ verticalAlign: "middle" }}><span className="dot" />test mode</span> <span style={{ color: "var(--t3)" }}>· use Dodo test card 4242 4242 4242 4242</span></p>
       {flash && <div className={flash.ok ? "flash flash-ok" : "flash flash-error"}>{flash.msg}</div>}
 
-      <div className="card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 16, marginBottom: 12 }}>Current plan</h3>
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
-          <span className="badge badge-lime" style={{ fontSize: 14, padding: "6px 14px" }}>{PLANS[currentPlan as keyof typeof PLANS]?.label ?? currentPlan}</span>
-          {sub?.status && <span className="badge" style={{ textTransform: "capitalize" }}>{sub.status}</span>}
-          {usage && <span style={{ fontSize: 13, color: "var(--t2)" }}>{usage.used} / {usage.limit === Infinity ? "∞" : usage.limit} deletions this period</span>}
+      <div className="card card-hover" style={{ marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+          <h3 style={{ fontSize: 15, margin: 0 }}>💳 Current plan</h3>
+          {sub?.current_period_end && <div style={{ fontSize: 12, color: "var(--t3)" }}>Renews {new Date(sub.current_period_end).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</div>}
         </div>
-        {sub?.current_period_end && <div style={{ fontSize: 12, color: "var(--t3)", marginTop: 8 }}>Renews: {new Date(sub.current_period_end).toLocaleDateString()}</div>}
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginTop: 14 }}>
+          <span className="badge badge-lime" style={{ fontSize: 13.5, padding: "6px 14px" }}><span className="dot" />{PLANS[currentPlan as keyof typeof PLANS]?.label ?? currentPlan}</span>
+          {sub?.status && <span className="badge" style={{ textTransform: "capitalize" }}>{sub.status}</span>}
+        </div>
+        {usage && (
+          <div style={{ marginTop: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "var(--t2)", marginBottom: 6 }}>
+              <span>Usage this period</span>
+              <span className="mono">{usage.used} / {usage.limit === Infinity ? "∞" : usage.limit}</span>
+            </div>
+            <div className="progress"><span style={{ width: `${pct}%` }} /></div>
+          </div>
+        )}
       </div>
 
-      <div className="card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 16, marginBottom: 4 }}>Upgrade or change plan</h3>
-        <p className="dim" style={{ fontSize: 13, marginBottom: 16 }}>Checkout is via Dodo Payments (test_mode). Webhook upgrades your plan automatically.</p>
-        {checkoutBusy && <div className="flash flash-ok">Redirecting to checkout…</div>}
+      <div className="card" style={{ marginBottom: 20 }}>
+        <h3 style={{ fontSize: 15, marginBottom: 4 }}>🚀 Upgrade or change plan</h3>
+        <p className="dim" style={{ fontSize: 12.5, marginBottom: 16 }}>Secure checkout via Dodo Payments. Your plan upgrades automatically the moment payment confirms.</p>
+        {checkoutBusy && <div className="flash flash-ok">Redirecting to Dodo checkout…</div>}
         <PricingGrid mode="billing" currentPlan={currentPlan} onSelect={handleSelect} />
       </div>
 
-      <div className="card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 16, marginBottom: 12 }}>Subscription actions</h3>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      <div className="grid grid-2" style={{ marginBottom: 20 }}>
+        <div className="card">
+          <h3 style={{ fontSize: 15, marginBottom: 8 }}>Subscription</h3>
+          <p className="dim" style={{ fontSize: 12.5, marginBottom: 12 }}>Cancel calls Dodo first, then updates locally — you&apos;re never charged after cancelling.</p>
           <button className="btn" onClick={handleCancel} disabled={busy || !isPaid}>{busy ? "Cancelling…" : "Cancel subscription"}</button>
-          <span style={{ fontSize: 12, color: "var(--t3)", alignSelf: "center" }}>{!isPaid ? "No active paid subscription to cancel" : "Calls Dodo PATCH /subscriptions/{id} first (§6.12)"}</span>
+          {!isPaid && <div style={{ fontSize: 12, color: "var(--t3)", marginTop: 8 }}>No active paid subscription to cancel.</div>}
         </div>
-      </div>
-
-      <div className="card" style={{ borderColor: "var(--rose-10)" }}>
-        <h3 style={{ fontSize: 16, marginBottom: 8, color: "var(--rose)" }}>Danger zone</h3>
-        <button className="btn" style={{ borderColor: "var(--rose)", color: "var(--rose)" }} onClick={handleDeleteAccount}>Delete account</button>
-        <span style={{ fontSize: 12, color: "var(--t3)", marginLeft: 12 }}>Cascades to all keys/credentials/requests</span>
+        <div className="card" style={{ borderColor: "rgba(255,80,80,.2)" }}>
+          <h3 style={{ fontSize: 15, marginBottom: 8, color: "var(--rose)" }}>⛔ Danger zone</h3>
+          <p className="dim" style={{ fontSize: 12.5, marginBottom: 12 }}>Deletes your account, keys, credentials and history. Cannot be undone.</p>
+          <button className="btn btn-danger" onClick={handleDeleteAccount}>Delete account</button>
+        </div>
       </div>
     </div>
   );

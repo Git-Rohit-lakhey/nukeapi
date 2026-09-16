@@ -47,83 +47,99 @@ export default async function DashboardPage() {
   const successRate = total ? Math.round((okCount / total) * 100) : 100;
   const connectedList = (connected ?? []).map((c) => c.integration);
 
-  return (
-    <div>
-      <p className="eyebrow">overview</p>
-      <h1 style={{ fontSize: 30 }}>Welcome back</h1>
+  const pct = limit === Infinity ? 100 : limit === 0 ? 0 : Math.min(100, Math.round((used / limit) * 100));
+  const needsAttention = limit !== Infinity && remaining <= Math.max(2, Math.ceil(limit * 0.1));
 
-      <div className="grid grid-3" style={{ marginTop: 24 }}>
-        <div className="card">
-          <div className="dim" style={{ fontSize: 12, fontFamily: "var(--mono)" }}>
-            PLAN
-          </div>
-          <div style={{ fontSize: 22, fontWeight: 800, marginTop: 4 }}>
+  return (
+    <div className="anim-fadeUp">
+      <p className="eyebrow">overview</p>
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+        <h1 style={{ fontSize: 30, margin: 0 }}>Welcome back</h1>
+        <span className="badge badge-lime"><span className="dot" />{PLANS[plan as keyof typeof PLANS]?.label ?? plan} · {sub?.status ?? "active"}</span>
+      </div>
+
+      <div className="grid grid-3" style={{ marginTop: 22 }}>
+        <div className="card card-hover">
+          <div className="stat-label">plan</div>
+          <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6 }}>
             {PLANS[plan as keyof typeof PLANS]?.label ?? plan}
           </div>
-          <span className="badge badge-lime" style={{ marginTop: 8 }}>
-            {sub?.status === "trialing" ? "TRIAL" : sub?.status ?? "active"}
-          </span>
+          <div className="dim" style={{ fontSize: 12.5, marginTop: 6 }}>
+            {plan === "free" ? "Sandbox · upgrade for PDF + more quota" : `Billed via Dodo · ${sub?.status ?? ""}`}
+          </div>
+          {plan === "free" && (
+            <Link href="/settings" className="btn btn-primary btn-sm" style={{ marginTop: 12 }}>Upgrade →</Link>
+          )}
         </div>
-        <div className="card">
-          <div className="dim" style={{ fontSize: 12, fontFamily: "var(--mono)" }}>
-            DELETIONS THIS MONTH
-          </div>
-          <div className="stat" style={{ marginTop: 4 }}>
+        <div className="card card-hover">
+          <div className="stat-label">deletions this month</div>
+          <div className="stat" style={{ marginTop: 6 }}>
             {used}
-            <span style={{ color: "var(--t3)", fontSize: 16 }}> / {limit === Infinity ? "∞" : limit}</span>
+            <span style={{ color: "var(--t3)", fontSize: 16, fontWeight: 500 }}> / {limit === Infinity ? "∞" : limit}</span>
           </div>
-          <div className="dim" style={{ fontSize: 12, marginTop: 4 }}>
+          <div className="progress" style={{ marginTop: 12 }}><span style={{ width: `${pct}%` }} /></div>
+          <div className="dim" style={{ fontSize: 12, marginTop: 8, color: needsAttention ? "var(--amber)" : undefined }}>
             {remaining === Infinity ? "unlimited remaining" : `${remaining} remaining`}
             {overageRate ? ` · $${overageRate}/extra` : ""}
+            {needsAttention ? " · running low — upgrade" : ""}
           </div>
         </div>
-        <div className="card">
-          <div className="dim" style={{ fontSize: 12, fontFamily: "var(--mono)" }}>
-            SUCCESS RATE
-          </div>
-          <div className="stat" style={{ marginTop: 4, color: "var(--emerald)" }}>
+        <div className="card card-hover">
+          <div className="stat-label">success rate</div>
+          <div className="stat" style={{ marginTop: 6, color: successRate >= 90 ? "var(--emerald)" : successRate >= 60 ? "var(--amber)" : "var(--rose)" }}>
             {successRate}%
           </div>
-          <div className="dim" style={{ fontSize: 12, marginTop: 4 }}>
-            {total} recent request(s)
+          <div className="dim" style={{ fontSize: 12, marginTop: 8 }}>
+            {total} recent request{total === 1 ? "" : "s"} · partial counts as handled
           </div>
         </div>
       </div>
 
       <div className="grid grid-2" style={{ marginTop: 16 }}>
-        <div className="card">
-          <h3 style={{ fontSize: 16 }}>Connected integrations</h3>
+        <div className="card card-hover">
+          <h3 style={{ fontSize: 15 }}>🔌 Connected integrations</h3>
           {connectedList.length === 0 ? (
-            <p style={{ marginTop: 8 }}>
-              None yet. <Link href="/connectors" style={{ color: "var(--lime)" }}>Connect one →</Link>
-            </p>
+            <div className="empty" style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 22, marginBottom: 8 }}>🔌</div>
+              <div style={{ fontWeight: 700, color: "var(--t2)", fontSize: 13.5 }}>Nothing connected yet</div>
+              <div style={{ fontSize: 12.5, marginTop: 4 }}>Connect Stripe to send your first deletion.</div>
+              <Link href="/connectors" className="btn btn-primary btn-sm" style={{ marginTop: 12 }}>Connect one →</Link>
+            </div>
           ) : (
-            <div className="flex wrap gap-8" style={{ marginTop: 8 }}>
+            <div className="flex wrap gap-8" style={{ marginTop: 12 }}>
               {connectedList.map((c) => (
                 <span key={c} className="badge badge-success">
-                  {c}
+                  <span className="dot" />{c}
                 </span>
               ))}
             </div>
           )}
         </div>
-        <div className="card">
-          <h3 style={{ fontSize: 16 }}>Quick start</h3>
-          <p style={{ marginTop: 8 }}>
+        <div className="card card-hover">
+          <h3 style={{ fontSize: 15 }}>⚡ Quick start</h3>
+          <p style={{ marginTop: 8, fontSize: 13 }}>
             Send a deletion with your API key:
           </p>
-          <pre className="codeblock" style={{ marginTop: 8, fontSize: 12 }}>
+          <pre className="codeblock" style={{ marginTop: 10, fontSize: 11.5 }}>
 {`curl -X POST ${process.env.NEXT_PUBLIC_APP_URL ?? ""}/api/v1/delete-user \\
   -H "Authorization: Bearer nk_live_..." \\
   -d '{"subject_email":"user@x.com"}'`}
           </pre>
+          <Link href="/keys" style={{ color: "var(--lime)", fontSize: 13, marginTop: 10, display: "inline-block" }}>Get a key →</Link>
         </div>
       </div>
 
       <div className="card" style={{ marginTop: 16 }}>
-        <h3 style={{ fontSize: 16 }}>Recent activity</h3>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h3 style={{ fontSize: 15, margin: 0 }}>🧾 Recent activity</h3>
+          {reqs.length > 0 && <Link href="/requests" style={{ color: "var(--lime)", fontSize: 13 }}>View all →</Link>}
+        </div>
         {reqs.length === 0 ? (
-          <p style={{ marginTop: 8 }}>No deletions yet.</p>
+          <div className="empty" style={{ marginTop: 12 }}>
+            <div style={{ fontSize: 22, marginBottom: 8 }}>🧾</div>
+            <div style={{ fontWeight: 700, color: "var(--t2)", fontSize: 13.5 }}>No deletions yet</div>
+            <div style={{ fontSize: 12.5, marginTop: 4 }}>Your API calls will appear here with per-integration results.</div>
+          </div>
         ) : (
           <table className="table" style={{ marginTop: 8 }}>
             <thead>
@@ -137,12 +153,12 @@ export default async function DashboardPage() {
             <tbody>
               {reqs.map((r) => (
                 <tr key={r.id}>
-                  <td>{r.subject_email}</td>
+                  <td className="mono" style={{ fontSize: 12.5 }}>{r.subject_email}</td>
                   <td>
                     <span
                       className={`badge badge-${r.status === "failed" ? "failed" : r.status === "completed" ? "success" : "skipped"}`}
                     >
-                      {r.status}
+                      <span className="dot" />{r.status}
                     </span>
                   </td>
                   <td className="mono" style={{ fontSize: 12 }}>

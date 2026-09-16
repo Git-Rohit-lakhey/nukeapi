@@ -90,23 +90,22 @@ export default function PricingGrid({
 
           return (
             <div
-              className="card"
+              className={`card card-hover${isFeatured ? " card-featured" : ""}${isCurrent ? " card-featured" : ""}`}
               key={slug}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                ...(isFeatured ? { borderColor: "var(--lime-28)" } : undefined),
-              }}
+              style={{ display: "flex", flexDirection: "column", position: "relative" }}
             >
               {isFeatured && (
-                <span className="badge badge-lime" style={{ marginBottom: 12 }}>
-                  Most popular
+                <span className="badge badge-lime" style={{ marginBottom: 12, alignSelf: "flex-start" }}>
+                  <span className="dot" />Most popular
                 </span>
               )}
-              <h3 style={{ fontSize: 20 }}>{def.label}</h3>
-              <div className="stat" style={{ fontSize: 26 }}>
+              {isCurrent && mode === "billing" && (
+                <span className="badge badge-success" style={{ marginBottom: 12, alignSelf: "flex-start" }}>current</span>
+              )}
+              <h3 style={{ fontSize: 17, letterSpacing: "-.01em", marginBottom: 6 }}>{def.label}</h3>
+              <div className="stat" style={{ fontSize: 30, letterSpacing: "-.03em" }}>
                 {isFree ? "Free" : `$${price.toLocaleString("en-US")}`}
-                {!isFree && <span className="dim" style={{ fontSize: 13 }}>{period}</span>}
+                {!isFree && <span className="dim" style={{ fontSize: 13, fontWeight: 500 }}>{period}</span>}
               </div>
               {monthlyEquiv && (
                 <div className="dim" style={{ fontSize: 12, marginTop: 4 }}>
@@ -117,16 +116,19 @@ export default function PricingGrid({
                 style={{
                   listStyle: "none",
                   padding: 0,
-                  margin: "14px 0",
-                  fontSize: 14,
+                  margin: "16px 0 20px",
+                  fontSize: 13.5,
                   color: "var(--t2)",
                   flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
                 }}
               >
-                <li>· {def.includedDeletions === Infinity ? "Unlimited" : def.includedDeletions} deletions/mo</li>
-                <li>· {def.maxIntegrations === Infinity ? "Unlimited integrations" : `Up to ${def.maxIntegrations} integrations`}</li>
-                {def.overageRate ? <li>· ${def.overageRate}/extra deletion</li> : null}
-                {!isFree && <li>· 2 months free on annual</li>}
+                <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>{def.includedDeletions === Infinity ? "Unlimited" : def.includedDeletions} deletions/mo</li>
+                <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>{def.maxIntegrations === Infinity ? "Unlimited integrations" : `Up to ${def.maxIntegrations} integrations`}</li>
+                {def.overageRate ? <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>${def.overageRate}/extra deletion</li> : <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>No overage — flat</li>}
+                {!isFree && <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>Signed PDF audit trail</li>}
               </ul>
 
               {mode === "marketing" ? (
