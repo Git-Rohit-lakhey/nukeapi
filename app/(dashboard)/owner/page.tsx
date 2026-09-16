@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionUser, getSupabaseAdmin } from "@/lib/db/supabase";
 import { PLANS } from "@/lib/constants/compliance";
-import { OwnerConnectors } from "@/components/dashboard/OwnerConnectors";
+import { ALL_CONNECTOR_META } from "@/lib/connectors/meta";
 
 export const dynamic = "force-dynamic";
 
@@ -98,7 +98,19 @@ export default async function OwnerPage() {
         </table>
       </div>
 
-      <OwnerConnectors />
+      <div className="card" style={{ marginTop: 16 }}>
+        <h3 style={{ fontSize: 16 }}>Connectors (v2: all 6 live, no flag table)</h3>
+        <div className="flex wrap gap-8" style={{ marginTop: 12 }}>
+          {ALL_CONNECTOR_META.map((m) => (
+            <span key={m.key} className="badge badge-success">
+              <span className="dot" />{m.label}
+            </span>
+          ))}
+        </div>
+        <p className="dim" style={{ fontSize: 12.5, marginTop: 10 }}>
+          Per-connector kill-switches return in a later phase with their own migration — not as a missing table.
+        </p>
+      </div>
 
       <div className="card" style={{ marginTop: 16 }}>
         <h3 style={{ fontSize: 16 }}>Recent feedback</h3>

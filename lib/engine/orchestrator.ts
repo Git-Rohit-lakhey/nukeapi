@@ -20,10 +20,9 @@ export interface RunDeletionParams {
     integration: Integration,
   ) => Promise<Record<string, string> | null>;
   /**
-   * Set of integrations currently enabled by the owner (connector_flags).
-   * Defense-in-depth: the API route already rejects disabled integrations, but
-   * any that slip through here are skipped rather than run. When omitted,
-   * availability is not checked (used by tests with injected connectors).
+   * Optional allowlist of runnable integrations. Defense-in-depth: anything
+   * not in the set is skipped rather than run. The delete-user route omits
+   * it (all 6 registered integrations are live in v2); tests inject it.
    */
   enabledSet?: Set<string>;
 }

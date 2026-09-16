@@ -17,9 +17,10 @@ export function validateSqlIdentifier(name: string): boolean {
 }
 
 /**
- * The universal SQL connector. Parameterized by a spec so every SQL-backed
- * integration (Postgres, MySQL, PlanetScale, Neon, Turso) is pure config — no
- * per-database code file.
+ * The universal SQL connector. v2 ships Postgres only (`pg` is the single
+ * SQL driver dependency) — adding another database means adding its driver
+ * to package.json AND a branch here, in a dedicated ROADMAP phase, not
+ * silently. Parameterized by spec so Postgres-compatible targets stay config.
  */
 export function sqlConnector(spec: SqlSpec): ConnectorFn {
   const key = spec.key;
@@ -42,66 +43,33 @@ export function sqlConnector(spec: SqlSpec): ConnectorFn {
       );
     }
 
+    if (spec.driver !== "pg") {
+      return failResult(key, `Unsupported SQL driver: ${spec.driver}`, start, "v2 ships the pg driver only");
+    }
+
     try {
-      if (spec.driver === "pg") {
-        const { Pool } = await import("pg");
-        const pool = new Pool({
-          connectionString: conn,
-          ssl: { rejectUnauthorized: true },
-          max: 1,
-        });
+      const { Pool } = await import("pg");
+      const pool = new Pool({
+        connectionString: conn,
+        ssl: { rejectUnauthorized: true },
+        max: 1,
+      });
+      try {
+        const client = await pool.connect();
         try {
-          const client = await pool.connect();
-          try {
-            const { rowCount } = await client.query(
-              `DELETE FROM "${table}" WHERE "${column}" = ${placeholder}`,
-              [email],
-            );
-            if (!rowCount || rowCount === 0) {
-              return skipResult(key, `No ${itemNoun}s in "${table}" matched that email`, start);
-            }
-            return okResult(key, `Deleted ${rowCount} ${itemNoun}${rowCount === 1 ? "" : "s"} from "${table}"`, start);
-          } finally {
-            client.release();
-          }
-        } finally {
-          await pool.end();
-        }
-      } else if (spec.driver === "mysql") {
-        const mysql = await import("mysql2/promise");
-        const pool = mysql.createPool({ uri: conn, connectionLimit: 1 });
-        try {
-          const [res] = (await pool.query(
-            `DELETE FROM \`${table}\` WHERE \`${column}\` = ?`,
+          const { rowCount } = await client.query(
+            `DELETE FROM "${table}" WHERE "${column}" = ${placeholder}`,
             [email],
-          )) as any;
-          const rowCount = Number(res?.affectedRows ?? 0);
+          );
           if (!rowCount || rowCount === 0) {
-            return skipResult(key, `No ${itemNoun}s in \`${table}\` matched that email`, start);
-          }
-          return okResult(key, `Deleted ${rowCount} ${itemNoun}${rowCount === 1 ? "" : "s"} from \`${table}\``, start);
-        } finally {
-          await pool.end();
-        }
-      } else {
-        const { createClient } = await import("@libsql/client");
-        const client = createClient({
-          url: conn,
-          authToken: spec.authTokenField ? creds[spec.authTokenField] : undefined,
-        });
-        try {
-          const res = await client.execute({
-            sql: `DELETE FROM "${table}" WHERE "${column}" = ?`,
-            args: [email],
-          });
-          const count = Number(res.rowsAffected ?? 0);
-          if (count === 0) {
             return skipResult(key, `No ${itemNoun}s in "${table}" matched that email`, start);
           }
-          return okResult(key, `Deleted ${count} ${itemNoun}${count === 1 ? "" : "s"} from "${table}"`, start);
+          return okResult(key, `Deleted ${rowCount} ${itemNoun}${rowCount === 1 ? "" : "s"} from "${table}"`, start);
         } finally {
-          client.close();
+          client.release();
         }
+      } finally {
+        await pool.end();
       }
     } catch (e) {
       return failResult(key, `${label} deletion failed`, start, (e as Error).message);

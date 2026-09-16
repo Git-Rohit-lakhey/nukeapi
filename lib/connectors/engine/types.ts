@@ -100,13 +100,12 @@ export interface SqlSpec {
   key: Integration;
   transport: "sql";
   label: string;
-  driver: "pg" | "mysql" | "libsql";
+  /** v2 ships "pg" only. Do NOT add a driver without adding its package to package.json. */
+  driver: "pg";
   connectionStringField: string;
-  /** For libsql (Turso) — the auth token credential field. */
-  authTokenField?: string;
   tableField: string;
   columnField: string;
-  /** SQL placeholder style. Default "$1" (pg). MySQL/PlanetScale use "?". */
+  /** SQL placeholder style. Default "$1" (pg). */
   placeholder?: "$1" | "?";
   /** Human label for the table in messages. Default "rows". */
   itemNoun?: string;
