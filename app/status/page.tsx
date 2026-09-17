@@ -26,7 +26,13 @@ export default function StatusPage() {
         if (!active) return;
         setPingMs(elapsed);
         setStatus(json.data?.status ?? "unknown");
-        setChecks(json.data?.checks ?? []);
+        // Defensive: the feed is an array, but never let a shape drift crash the page.
+        const raw = json.data?.checks;
+        setChecks(
+          Array.isArray(raw)
+            ? raw.filter((c) => c && typeof c.name === "string").map((c) => ({ name: c.name, ok: c.ok === true, detail: typeof c.detail === "string" ? c.detail : undefined }))
+            : [],
+        );
         setLastChecked(new Date().toLocaleTimeString());
       } catch {
         if (active) {
