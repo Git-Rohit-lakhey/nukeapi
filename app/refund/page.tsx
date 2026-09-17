@@ -34,10 +34,11 @@ export default function RefundPage() {
         current billing period and you will not be charged again.
       </p>
 
-      <h2 style={{ fontSize: 20, marginTop: 24 }}>4. Overage Charges</h2>
+      <h2 style={{ fontSize: 20, marginTop: 24 }}>4. Unused Quota</h2>
       <p>
-        Overage charges (per-deletion fees above your plan limit) are non-refundable once
-        the API calls have been successfully processed and logged in your audit trail.
+        Plans include a fixed monthly deletion allowance with no overage charges.
+        Unused deletions do not roll over to the next month and are not refundable
+        in whole or in part.
       </p>
 
       <h2 style={{ fontSize: 20, marginTop: 24 }}>5. Service Downtime</h2>

@@ -1,10 +1,15 @@
 import type { Integration } from "@/types/connector";
 
 /**
- * SINGLE SOURCE OF TRUTH for plan limits, pricing, overage and legal figures.
+ * SINGLE SOURCE OF TRUTH for plan limits, pricing and legal figures.
  * Every page, migration, webhook and checkout flow reads from here. There is
  * deliberately NO plan_limits table in the database — keeping the numbers in
  * one code location prevents DB/application drift.
+ *
+ * Billing model: hard monthly caps, no overage. When usage reaches the plan
+ * limit the API returns 402 QUOTA_EXCEEDED until the user upgrades or the
+ * period resets. `overageRate` is therefore null on every plan; the field is
+ * kept (nullable) only so API usage blocks keep a stable shape.
  */
 
 export type PlanSlug =
@@ -23,7 +28,8 @@ export interface PlanDef {
   priceYearly: number;
   /** Included deletions per billing period. Infinity for unlimited. */
   includedDeletions: number;
-  /** Overage price per deletion beyond the included amount. null = none. */
+  /** Overage price per deletion beyond the included amount. Always null:
+   *  all plans use hard monthly caps (402 QUOTA_EXCEEDED at the limit). */
   overageRate: number | null;
   /** Max number of integrations a user may connect/use. Infinity = unlimited. */
   maxIntegrations: number;
@@ -52,7 +58,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceMonthly: 99,
     priceYearly: 990,
     includedDeletions: 200,
-    overageRate: 0.5,
+    overageRate: null,
     maxIntegrations: 12,
     billing: "monthly",
   },
@@ -62,7 +68,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceMonthly: 99,
     priceYearly: 990,
     includedDeletions: 200,
-    overageRate: 0.5,
+    overageRate: null,
     maxIntegrations: 12,
     billing: "yearly",
   },
@@ -72,7 +78,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceMonthly: 299,
     priceYearly: 2990,
     includedDeletions: 1000,
-    overageRate: 0.35,
+    overageRate: null,
     maxIntegrations: 25,
     billing: "monthly",
   },
@@ -82,7 +88,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceMonthly: 299,
     priceYearly: 2990,
     includedDeletions: 1000,
-    overageRate: 0.35,
+    overageRate: null,
     maxIntegrations: 25,
     billing: "yearly",
   },

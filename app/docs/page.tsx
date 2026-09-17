@@ -45,7 +45,7 @@ const ENDPOINTS = [
       "used": 14,
       "limit": 200,
       "remaining": 186,
-      "overageRate": 0.5
+      "overageRate": null
     }
   }
 }`,
@@ -162,12 +162,12 @@ export default function DocsPage() {
           <thead><tr><th>Plan</th><th>Requests/min</th><th>Deletions/month</th><th>Overage</th></tr></thead>
           <tbody>
             <tr><td>Sandbox</td><td>60</td><td>20</td><td>None</td></tr>
-            <tr><td>Startup</td><td>60</td><td>200</td><td>$0.50 / deletion</td></tr>
-            <tr><td>Business</td><td>60</td><td>1,000</td><td>$0.35 / deletion</td></tr>
+            <tr><td>Startup</td><td>60</td><td>200</td><td>None — hard cap</td></tr>
+            <tr><td>Business</td><td>60</td><td>1,000</td><td>None — hard cap</td></tr>
             <tr><td>Enterprise</td><td>60</td><td>Unlimited</td><td>Included</td></tr>
           </tbody>
         </table>
-        <p>Rate limits apply per account — 60 requests/minute on every plan.</p>
+        <p>Rate limits apply per account — 60 requests/minute on every plan. Deletion quotas are hard monthly caps: when you reach your limit the API returns <code>402 QUOTA_EXCEEDED</code> until you upgrade or the period resets. There are no per-deletion overage charges.</p>
 
         {/* Available integrations */}
         <h2>Available Integrations</h2>

@@ -127,7 +127,7 @@ export default function PricingGrid({
               >
                 <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>{def.includedDeletions === Infinity ? "Unlimited" : def.includedDeletions} deletions/mo</li>
                 <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>{def.maxIntegrations === Infinity ? "Unlimited integrations" : `Up to ${def.maxIntegrations} integrations`}</li>
-                {def.overageRate ? <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>${def.overageRate}/extra deletion</li> : <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>No overage — flat</li>}
+                {def.overageRate ? <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>${def.overageRate}/extra deletion</li> : <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>No overage fees</li>}
                 {!isFree && <li><span style={{ color: "var(--lime)", marginRight: 8 }}>✓</span>Signed PDF audit trail</li>}
               </ul>
 

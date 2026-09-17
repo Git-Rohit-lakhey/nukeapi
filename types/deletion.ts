@@ -7,8 +7,8 @@ export interface UsageInfo {
   used: number;
   limit: number;
   remaining: number;
+  /** Always null — all plans use hard monthly caps, no overage billing. */
   overageRate?: number | null;
-  overageCharged?: number;
 }
 
 export interface DeleteUserRequest {

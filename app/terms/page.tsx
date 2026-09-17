@@ -58,11 +58,13 @@ export default function TermsPage() {
         dashboard settings — access continues until the end of the current billing period.
       </p>
 
-      <h2 style={{ fontSize: 20, marginTop: 24 }}>7. Usage Limits and Overages</h2>
+      <h2 style={{ fontSize: 20, marginTop: 24 }}>7. Usage Limits</h2>
       <p>
-        Each plan includes a monthly deletion allowance. Usage above your plan limit is
-        subject to per-deletion overage fees as specified on the pricing page. NukeAPI may
-        throttle accounts that consistently exceed limits without a valid overage arrangement.
+        Each plan includes a monthly deletion allowance. There are no overage
+        charges: usage above your plan limit is rejected with a quota error
+        until you upgrade to a higher plan or your allowance resets for the new
+        calendar month. Unused deletions do not roll over. NukeAPI may throttle
+        accounts that repeatedly hit their limits in a way that suggests abuse.
       </p>
 
       <h2 style={{ fontSize: 20, marginTop: 24 }}>8. Uptime and Availability</h2>
