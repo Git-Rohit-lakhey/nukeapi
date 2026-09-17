@@ -53,7 +53,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceYearly: 990,
     includedDeletions: 200,
     overageRate: 0.5,
-    maxIntegrations: 8,
+    maxIntegrations: 12,
     billing: "monthly",
   },
   startup_yearly: {
@@ -63,7 +63,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceYearly: 990,
     includedDeletions: 200,
     overageRate: 0.5,
-    maxIntegrations: 8,
+    maxIntegrations: 12,
     billing: "yearly",
   },
   business: {
@@ -73,7 +73,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceYearly: 2990,
     includedDeletions: 1000,
     overageRate: 0.35,
-    maxIntegrations: 20,
+    maxIntegrations: 25,
     billing: "monthly",
   },
   business_yearly: {
@@ -83,7 +83,7 @@ export const PLANS: Record<PlanSlug, PlanDef> = {
     priceYearly: 2990,
     includedDeletions: 1000,
     overageRate: 0.35,
-    maxIntegrations: 20,
+    maxIntegrations: 25,
     billing: "yearly",
   },
   enterprise: {

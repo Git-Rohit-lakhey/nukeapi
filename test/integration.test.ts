@@ -156,12 +156,12 @@ test("orchestrator: all succeeded -> completed, all failed -> failed", async () 
   assert.equal(fail.status, "failed");
 });
 
-test("compliance: plan integration caps are 3 / 8 / 20 / unlimited (lightweight v2)", () => {
+test("compliance: plan integration caps are 3 / 12 / 25 / unlimited (lightweight v2)", () => {
   assert.equal(getMaxIntegrations("free"), 3);
-  assert.equal(getMaxIntegrations("startup"), 8);
-  assert.equal(getMaxIntegrations("startup_yearly"), 8);
-  assert.equal(getMaxIntegrations("business"), 20);
-  assert.equal(getMaxIntegrations("business_yearly"), 20);
+  assert.equal(getMaxIntegrations("startup"), 12);
+  assert.equal(getMaxIntegrations("startup_yearly"), 12);
+  assert.equal(getMaxIntegrations("business"), 25);
+  assert.equal(getMaxIntegrations("business_yearly"), 25);
   assert.equal(getMaxIntegrations("enterprise"), Infinity);
   assert.equal(getMaxIntegrations("enterprise_yearly"), Infinity);
   assert.equal(getMaxIntegrations("not-a-real-plan"), 3);
@@ -178,5 +178,5 @@ test("compliance: free is fixed whitelist stripe/mailchimp/hubspot, paid allow a
   assert.equal(isIntegrationAllowed("startup", "intercom"), true);
   assert.equal(isIntegrationAllowed("startup", "postgresql"), true);
   assert.equal(isIntegrationAllowed("enterprise", "postgresql"), true);
-  assert.equal(getPlanLimits("startup").maxIntegrations, 8);
+  assert.equal(getPlanLimits("startup").maxIntegrations, 12);
 });
