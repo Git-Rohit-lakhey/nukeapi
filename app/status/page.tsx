@@ -70,7 +70,7 @@ export default function StatusPage() {
         <p className="eyebrow">status</p>
         <h1>System status</h1>
         <p className="dim" style={{ fontSize: 13, marginBottom: 20 }}>
-          Database and API tested live on page load (8-second timeout), auto-refreshing every 30s.
+          Database and API checked live on page load, refreshing every 30 seconds.
         </p>
 
         {/* Overall */}

@@ -6,7 +6,7 @@ const LIME = '#c8f135'
 export const metadata = {
   title: 'API Documentation — NukeAPI',
   description: 'Complete API reference for NukeAPI — GDPR & CCPA user deletion API.',
-  alternates: { canonical: 'https://nukeapi.dev/docs' },
+  alternates: { canonical: 'https://www.nukeapi.dev/docs' },
 }
 
 /** Revalidate often so the integration Status column tracks owner toggles. */
@@ -50,11 +50,13 @@ const ENDPOINTS = [
   }
 }`,
     errors: [
+      ['200', 'completed — every requested integration succeeded'],
+      ['207', 'partial — some succeeded, some failed; see per-integration results'],
+      ['400', 'INVALID_BODY / INVALID_EMAIL / INVALID_INTEGRATION — malformed request'],
       ['401', 'Missing or invalid API key'],
-      ['403', 'INTEGRATION_NOT_ALLOWED — plan does not include the requested integration, or CONNECTOR_DISABLED — toggled off by the owner'],
-      ['400', 'Validation error — invalid email or malformed request body'],
       ['402', 'QUOTA_EXCEEDED — monthly plan limit reached'],
-      ['429', 'Rate limit (60 req/min per key) exceeded'],
+      ['403', 'INTEGRATION_NOT_ALLOWED (plan), CONNECTOR_DISABLED (owner toggled off), or CONNECTOR_NOT_LIVE_YET'],
+      ['429', 'Rate limit (60 req/min per account) exceeded'],
       ['500', 'Deletion engine error — check results array for per-integration detail'],
     ],
   },
@@ -93,7 +95,7 @@ export default function DocsPage() {
 
         <h1 style={{ fontSize:'2rem', fontWeight:800, marginBottom:8, letterSpacing:'-.02em' }}>API Documentation</h1>
         <p style={{ color:'#484858', fontSize:'14px', marginBottom:48 }}>
-          Base URL: <code style={{ color:LIME, background:'#111114', padding:'2px 8px', borderRadius:4 }}>https://nukeapi.dev</code>
+          Base URL: <code style={{ color:LIME, background:'#111114', padding:'2px 8px', borderRadius:4 }}>https://www.nukeapi.dev</code>
           {' · '}
           <Link href="/signup" style={{ color:LIME }}>Get your API key →</Link>
         </p>
@@ -121,7 +123,7 @@ export default function DocsPage() {
 
         {/* Quick Start */}
         <h2>Quick Start</h2>
-        <p>Get your first deletion working in under 5 minutes:</p>
+        <p>Get your first deletion working in about 15 minutes:</p>
 
         <DocsCodeTabs />
 
@@ -162,24 +164,19 @@ export default function DocsPage() {
             <tr><td>Sandbox</td><td>60</td><td>20</td><td>None</td></tr>
             <tr><td>Startup</td><td>60</td><td>200</td><td>$0.50 / deletion</td></tr>
             <tr><td>Business</td><td>60</td><td>1,000</td><td>$0.35 / deletion</td></tr>
-            <tr><td>Enterprise</td><td>Custom</td><td>Unlimited</td><td>Included</td></tr>
+            <tr><td>Enterprise</td><td>60</td><td>Unlimited</td><td>Included</td></tr>
           </tbody>
         </table>
+        <p>Rate limits apply per account — 60 requests/minute on every plan.</p>
 
         {/* Available integrations */}
         <h2>Available Integrations</h2>
         <p>
           Availability is controlled by the account owner. Every connector below
-          is toggleable on/off from the owner dashboard — a disabled or hidden
-          connector cannot be connected or run, and any request targeting it
-          returns a <code>403 CONNECTOR_DISABLED</code>. Only connectors the owner
-          has released are listed here; newly-built connectors stay hidden until
-          released.
+          shows its live status: a disabled, hidden, or maintenance connector
+          cannot be connected or run, and any request targeting it returns a{" "}
+          <code>403 CONNECTOR_DISABLED</code>.
         </p>
-        {/**
-          * Client-rendered so the list reflects live owner toggles: hidden
-          * connectors never appear, released ones appear automatically.
-          */}
         <DocsIntegrations />
 
         {/* Partial failures */}
@@ -194,9 +191,7 @@ export default function DocsPage() {
 
         {/* PDF audit */}
         <h2>PDF Audit Reports</h2>
-        <p>Download a signed PDF audit trail for any deletion request from your dashboard under Deletions → Details → Download PDF. The PDF includes the request ID, subject email, per-integration results, timestamps, duration, and a cryptographic HMAC-SHA256 signature — suitable for GDPR Article 17 compliance records.</p>
-        <p>PDF generation is available on the Startup plan and above.</p>
-        <p>PDFs are also downloadable any time from your dashboard under Deletions → Details → Download PDF (Startup plan and above).</p>
+        <p>Download a signed PDF audit trail for any deletion request from your dashboard under Requests → Audit detail → Download signed PDF (Startup plan and above). The PDF includes the request ID, subject email, per-integration results, timestamps, duration, and a cryptographic HMAC-SHA256 signature — suitable for GDPR Article 17 compliance records.</p>
 
         <div style={{ marginTop:56, paddingTop:24, borderTop:'1px solid #141418', fontSize:'13px', color:'#383840' }}>
           <Link href="/" style={{ color:LIME }}>← Back to NukeAPI</Link>

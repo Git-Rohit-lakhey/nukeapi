@@ -24,15 +24,15 @@ export default function ContactPage() {
       setFlash({ ok: false, msg: json?.error?.message ?? "Failed to send" });
       return;
     }
-    setFlash({ ok: true, msg: "Message sent — we'll get back to you." });
+    setFlash({ ok: true, msg: "Message received. We respond within 24 hours." });
     setMessage("");
   }
 
   const cards = [
-    { label: "General", subject: "General enquiry", desc: "Questions about NukeAPI, integrations, or the product" },
+    { label: "General", subject: "General inquiry", desc: "Questions about NukeAPI, integrations, or the product" },
     { label: "Billing", subject: "Billing support", desc: "Subscriptions, invoices, refunds, plan changes" },
     { label: "Privacy & Legal", subject: "Privacy request", desc: "Data access, deletion, DPA requests, legal matters" },
-    { label: "Bug Report", subject: "Bug report", desc: "Something not working? Tell us and we will fix it" },
+    { label: "Bug Report", subject: "Bug report", desc: "Report an issue with steps to reproduce and expected behavior" },
     { label: "Enterprise", subject: "Enterprise plan", desc: "Custom connectors, SLA, unlimited volume, white-label" },
   ];
 

@@ -5,14 +5,14 @@ import { useState } from "react";
 const LIME = "#c8f135";
 
 const CODE_EXAMPLES: Record<string, string> = {
-  curl: `curl -X POST https://nukeapi.dev/api/v1/delete-user \\
+  curl: `curl -X POST https://www.nukeapi.dev/api/v1/delete-user \\
   -H "Authorization: Bearer nk_live_••••••••" \\
   -H "Content-Type: application/json" \\
   -d '{
     "subject_email": "user@example.com",
-    "integrations": ["mailchimp", "hubspot", "intercom"]
+    "integrations": ["stripe", "mailchimp", "hubspot"]
   }'`,
-  node: `const res = await fetch('https://nukeapi.dev/api/v1/delete-user', {
+  node: `const res = await fetch('https://www.nukeapi.dev/api/v1/delete-user', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer nk_live_••••••••',
@@ -20,7 +20,7 @@ const CODE_EXAMPLES: Record<string, string> = {
   },
   body: JSON.stringify({
     subject_email: 'user@example.com',
-    integrations: ['mailchimp', 'hubspot', 'intercom'],
+    integrations: ['stripe', 'mailchimp', 'hubspot'],
   }),
 })
 const data = await res.json()
@@ -28,7 +28,7 @@ console.log(data.data.status) // "completed"`,
   python: `import requests
 
 res = requests.post(
-    'https://nukeapi.dev/api/v1/delete-user',
+    'https://www.nukeapi.dev/api/v1/delete-user',
     headers={'Authorization': 'Bearer nk_live_••••••••'},
     json={
         'subject_email': 'user@example.com',
@@ -48,10 +48,10 @@ import (
 func main() {
   body, _ := json.Marshal(map[string]any{
     "subject_email": "user@example.com",
-    "integrations":  []string{"mailchimp", "hubspot", "intercom"},
+    "integrations":  []string{"stripe", "mailchimp", "hubspot"},
   })
   req, _ := http.NewRequest("POST",
-    "https://nukeapi.dev/api/v1/delete-user",
+    "https://www.nukeapi.dev/api/v1/delete-user",
     bytes.NewReader(body),
   )
   req.Header.Set("Authorization", "Bearer nk_live_••••••••")
@@ -70,11 +70,11 @@ use serde_json::json;
 async fn main() {
     let client = Client::new();
     let resp = client
-        .post("https://nukeapi.dev/api/v1/delete-user")
+        .post("https://www.nukeapi.dev/api/v1/delete-user")
         .bearer_auth("nk_live_••••••••")
         .json(&json!({
             "subject_email": "user@example.com",
-            "integrations": ["mailchimp", "hubspot", "intercom"]
+            "integrations": ["stripe", "mailchimp", "hubspot"]
         }))
         .send()
         .await
@@ -85,7 +85,7 @@ async fn main() {
 }`,
   php: `<?php
 
-$ch = curl_init('https://nukeapi.dev/api/v1/delete-user');
+$ch = curl_init('https://www.nukeapi.dev/api/v1/delete-user');
 curl_setopt_array($ch, [
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => [
@@ -94,7 +94,7 @@ curl_setopt_array($ch, [
     ],
     CURLOPT_POSTFIELDS => json_encode([
         'subject_email' => 'user@example.com',
-        'integrations' => ['mailchimp', 'hubspot', 'intercom'],
+        'integrations' => ['stripe', 'mailchimp', 'hubspot'],
     ]),
     CURLOPT_RETURNTRANSFER => true,
 ]);
@@ -106,7 +106,7 @@ echo $data['data']['status']; // completed`,
   ruby: `require 'net/http'
 require 'json'
 
-uri = URI('https://nukeapi.dev/api/v1/delete-user')
+uri = URI('https://www.nukeapi.dev/api/v1/delete-user')
 req = Net::HTTP::Post.new(uri)
 req['Authorization'] = 'Bearer nk_live_••••••••'
 req['Content-Type'] = 'application/json'
@@ -126,18 +126,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class NukeApiExample {
+public class NukeAPIExample {
     public static void main(String[] args) throws Exception {
         String json = """
             {
                 "subject_email": "user@example.com",
-                "integrations": ["mailchimp", "hubspot", "intercom"]
+                "integrations": ["stripe", "mailchimp", "hubspot"]
             }
             """;
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://nukeapi.dev/api/v1/delete-user"))
+            .uri(URI.create("https://www.nukeapi.dev/api/v1/delete-user"))
             .header("Authorization", "Bearer nk_live_••••••••")
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(json))

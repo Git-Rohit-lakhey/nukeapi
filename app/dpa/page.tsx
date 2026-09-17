@@ -5,7 +5,7 @@ export const metadata = {
   title: "Data Processing Addendum",
   description:
     "NukeAPI Data Processing Addendum — sub-processors, GDPR Article 28 terms, and data-handling commitments.",
-  alternates: { canonical: "/dpa" },
+  alternates: { canonical: "https://www.nukeapi.dev/dpa" },
 };
 
 export default function DpaPage() {

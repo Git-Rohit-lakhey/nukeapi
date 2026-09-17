@@ -90,7 +90,7 @@ export default async function DashboardPage() {
             {successRate}%
           </div>
           <div className="dim" style={{ fontSize: 12, marginTop: 8 }}>
-            {total} recent request{total === 1 ? "" : "s"} · partial counts as handled
+            {total} recent request{total === 1 ? "" : "s"} · partial completions included
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
             <div className="empty" style={{ marginTop: 12 }}>
               <div style={{ fontSize: 22, marginBottom: 8 }}>🔌</div>
               <div style={{ fontWeight: 700, color: "var(--t2)", fontSize: 13.5 }}>Nothing connected yet</div>
-              <div style={{ fontSize: 12.5, marginTop: 4 }}>Connect Stripe to send your first deletion.</div>
+              <div style={{ fontSize: 12.5, marginTop: 4 }}>Connect an integration to send your first deletion.</div>
               <Link href="/connectors" className="btn btn-primary btn-sm" style={{ marginTop: 12 }}>Connect one →</Link>
             </div>
           ) : (

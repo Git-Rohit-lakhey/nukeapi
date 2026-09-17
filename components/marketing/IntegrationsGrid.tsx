@@ -30,10 +30,12 @@ export default function IntegrationsGrid() {
         const res = await fetch("/api/connectors/availability");
         const json = await res.json();
         if (cancelled || !res.ok || !json?.success) return;
+        const list = json.data?.integrations;
+        if (!Array.isArray(list)) return;
         const live: Record<string, boolean> = {};
         const maint: Record<string, boolean> = {};
         const runnable: Record<string, boolean> = {};
-        for (const i of json.data.integrations as Array<{
+        for (const i of list as Array<{
           key: string;
           visible: boolean;
           maintenance: boolean;

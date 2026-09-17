@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
 const NAV_LINKS: Array<[string, string]> = [
-  ["Integrations", "#integrations"],
-  ["Pricing", "#pricing"],
+  ["Integrations", "/#integrations"],
+  ["Pricing", "/#pricing"],
   ["Developers", "/docs"],
   ["Blog", "/blog"],
 ];
@@ -90,6 +90,8 @@ export function SiteNav() {
 export function SiteFooter() {
   const FOOTER_LINKS: Array<[string, string]> = [
     ["Developers", "/docs"],
+    ["Blog", "/blog"],
+    ["Pricing", "/#pricing"],
     ["Terms", "/terms"],
     ["Privacy", "/privacy"],
     ["DPA", "/dpa"],
@@ -116,7 +118,7 @@ export function SiteFooter() {
             <span style={{ color: "var(--lime)" }}>Nuke</span>API
           </div>
           <div style={{ fontSize: 12.5, color: "#55555f", lineHeight: 1.7 }}>One API call deletes a user everywhere. GDPR · CCPA · LGPD with signed PDF proof.</div>
-          <div style={{ marginTop: 12 }}><span className="badge badge-lime"><span className="dot" />all systems operational</span></div>
+          <div style={{ marginTop: 12 }}><Link href="/status" className="footer-link" style={{ textDecoration: "none" }}><span className="badge badge-lime"><span className="dot" />all systems operational</span></Link></div>
         </div>
         <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#383840", flexWrap: "wrap" }}>
           {FOOTER_LINKS.map(([label, href]) => (

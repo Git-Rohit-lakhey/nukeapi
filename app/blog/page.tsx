@@ -2,7 +2,11 @@ import Link from "next/link";
 import { SiteNav, SiteFooter } from "@/components/marketing/SiteNav";
 import { BLOG_POSTS } from "@/lib/blog";
 
-export const metadata = { title: "Blog" };
+export const metadata = {
+  title: "Blog — NukeAPI",
+  description: "Engineering guides on data privacy, GDPR erasure automation, and building reliable deletion systems.",
+  alternates: { canonical: "https://www.nukeapi.dev/blog" },
+};
 
 export default function BlogIndex() {
   return (
@@ -18,9 +22,11 @@ export default function BlogIndex() {
             gap: 16,
           }}
         >
-          <h1 style={{ fontSize: 34 }}>Writing</h1>
+          <h1 style={{ fontSize: 34 }}>Blog</h1>
           <a
             href="/rss.xml"
+            type="application/rss+xml"
+            aria-label="NukeAPI blog RSS feed"
             style={{
               fontSize: 12,
               color: "var(--t3)",

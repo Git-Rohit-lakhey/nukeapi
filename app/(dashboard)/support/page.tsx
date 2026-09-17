@@ -24,7 +24,7 @@ export default function SupportPage() {
       setFlash({ ok: false, msg: json?.error?.message ?? "Failed to send" });
       return;
     }
-    setFlash({ ok: true, msg: "Thanks — we'll take a look." });
+    setFlash({ ok: true, msg: "Message received. We respond within 24 hours." });
     setMessage("");
   }
 

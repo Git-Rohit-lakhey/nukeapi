@@ -5,7 +5,7 @@ export const metadata = {
   title: "Terms of Service",
   description:
     "NukeAPI Terms of Service — acceptable use, plan limits, billing, and liability for the user-deletion API.",
-  alternates: { canonical: "/terms" },
+  alternates: { canonical: "https://www.nukeapi.dev/terms" },
 };
 
 export default function TermsPage() {

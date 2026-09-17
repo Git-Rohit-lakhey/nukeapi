@@ -33,9 +33,11 @@ export default function ConnectorsPage() {
         const res = await fetch("/api/connectors/availability");
         const json = await res.json();
         if (!res.ok || !json?.success) return;
+        const list = json.data?.integrations;
+        if (!Array.isArray(list)) return;
         const usable: Record<string, boolean> = {};
         const maint: Record<string, boolean> = {};
-        for (const i of json.data.integrations as Array<{ key: string; usable: boolean; maintenance: boolean }>) {
+        for (const i of list as Array<{ key: string; usable: boolean; maintenance: boolean }>) {
           usable[i.key] = i.usable;
           if (i.maintenance) maint[i.key] = true;
         }
@@ -126,7 +128,7 @@ export default function ConnectorsPage() {
           </div>
           <p className="dim" style={{ fontSize: 13, margin: "8px 0 0", lineHeight: 1.7 }}>
             {isComingSoon
-              ? `${meta.label} is on the roadmap but its delete executor isn't live yet — it can't be connected or run. Request early access at hello@nukeapi.dev.`
+              ? <>{meta.label} is on the roadmap but its delete executor is not live yet — it cannot be connected or run. Request early access at <a href="mailto:hello@nukeapi.dev" style={{ color: "var(--lime)" }}>hello@nukeapi.dev</a>.</>
               : isMaint
                 ? `${meta.label} is temporarily in maintenance. Your saved credentials are kept — reconnects and deletes resume automatically when the owner flips it back.`
                 : `${meta.label} is currently paused by the administrator. Saves and deletes for it are rejected until it is re-enabled.`}

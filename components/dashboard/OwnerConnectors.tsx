@@ -84,6 +84,10 @@ export function OwnerConnectors() {
       setErr(json?.error?.message ?? "Failed to load connectors");
       return;
     }
+    if (!Array.isArray(json.data?.integrations)) {
+      setErr("Unexpected connector list response");
+      return;
+    }
     setRows(json.data.integrations);
     setLoaded(true);
   }, []);

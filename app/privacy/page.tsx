@@ -5,7 +5,7 @@ export const metadata = {
   title: "Privacy Policy",
   description:
     "NukeAPI Privacy Policy — what data we collect, how credentials are encrypted at rest (AES-256-GCM), and your rights.",
-  alternates: { canonical: "/privacy" },
+  alternates: { canonical: "https://www.nukeapi.dev/privacy" },
 };
 
 export default function PrivacyPage() {

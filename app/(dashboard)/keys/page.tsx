@@ -92,7 +92,7 @@ export default function KeysPage() {
           <div className="flex gap-12 wrap" style={{ marginTop: 12 }}>
             <button className="btn btn-primary btn-sm" onClick={copyKey}>Copy key</button>
             <button className="btn btn-sm" onClick={() => setRevealed(null)}>
-              Done — I&apos;ve stored it
+              Done — I have stored it
             </button>
           </div>
         </div>

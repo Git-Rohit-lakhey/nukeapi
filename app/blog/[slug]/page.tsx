@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} — NukeAPI Blog`,
     description: post.excerpt,
-    alternates: { canonical: `https://nukeapi.dev/blog/${post.slug}` },
+    alternates: { canonical: `https://www.nukeapi.dev/blog/${post.slug}` },
   };
 }
 

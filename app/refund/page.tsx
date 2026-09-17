@@ -4,7 +4,7 @@ export const metadata = {
   title: "Refund Policy",
   description:
     "NukeAPI Refund Policy — when refunds apply, how to request one, and processing timelines.",
-  alternates: { canonical: "/refund" },
+  alternates: { canonical: "https://www.nukeapi.dev/refund" },
 };
 
 export default function RefundPage() {

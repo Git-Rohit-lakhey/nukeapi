@@ -89,6 +89,10 @@ export default function SettingsPage() {
 
   const currentPlan = sub?.plan ?? "free";
   const isPaid = currentPlan !== "free" && sub?.status === "active";
+  const trialDays =
+    sub?.status === "trialing" && sub?.trial_ends_at
+      ? Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / 86400000))
+      : 0;
 
   const pct = !usage ? 0 : usage.limit === Infinity ? 100 : usage.limit === 0 ? 0 : Math.min(100, Math.round((usage.used / usage.limit) * 100));
 
@@ -100,7 +104,7 @@ export default function SettingsPage() {
       {flash && <div className={flash.ok ? "flash flash-ok" : "flash flash-error"}>{flash.msg}</div>}
       {sub?.status === "trialing" && sub?.trial_ends_at && (
         <div className="flash flash-ok">
-          🎉 Trial active — {Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} day(s) left on {PLANS[currentPlan as keyof typeof PLANS]?.label ?? currentPlan}. No card required.
+          Trial active — {trialDays} {trialDays === 1 ? "day" : "days"} remaining on {PLANS[currentPlan as keyof typeof PLANS]?.label ?? currentPlan}. No card required.
         </div>
       )}
 
