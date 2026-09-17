@@ -1,6 +1,192 @@
-export type Integration = "stripe" | "mailchimp" | "hubspot" | "intercom" | "supabase" | "postgresql";
+export type Integration =
+  // Core (live executors in v2)
+  | "stripe"
+  | "mailchimp"
+  | "hubspot"
+  | "intercom"
+  | "supabase"
+  | "postgresql"
+  // Dormant batch 1 (owner-enableable catalog; executors ship in a later phase)
+  | "salesforce"
+  | "segment"
+  | "klaviyo"
+  | "sendgrid"
+  | "auth0"
+  | "clerk"
+  | "posthog"
+  | "zendesk"
+  | "mixpanel"
+  // Databases
+  | "mysql"
+  | "planetscale"
+  | "neon"
+  | "mongodb"
+  | "firestore"
+  // Email
+  | "convertkit"
+  | "activecampaign"
+  | "resend"
+  | "drip"
+  // Analytics
+  | "amplitude"
+  | "fullstory"
+  | "heap"
+  | "june"
+  // Payments
+  | "paddle"
+  | "chargebee"
+  | "recurly"
+  | "braintree"
+  // CRM / Support
+  | "pipedrive"
+  | "freshdesk"
+  | "crisp"
+  // Auth
+  | "firebaseauth"
+  | "okta"
+  | "stytch"
+  // ── Batch 2: hidden-by-default until the owner releases ──
+  // Databases
+  | "turso"
+  | "redis"
+  | "elasticsearch"
+  | "cassandra"
+  // Auth providers
+  | "workos"
+  | "passage"
+  | "cognito"
+  | "keycloak"
+  // Email marketing
+  | "brevo"
+  | "omnisend"
+  | "beehiiv"
+  | "substack"
+  | "loops"
+  | "customerio"
+  // Support & CRM
+  | "linear"
+  | "helpscout"
+  | "gorgias"
+  | "groove"
+  // Analytics
+  | "smartlook"
+  | "logrocket"
+  | "datadog"
+  | "pendo"
+  // Payments & billing
+  | "lemonsqueezy"
+  | "gumroad"
+  | "zuora"
+  // Cloud storage
+  | "awss3"
+  | "cloudflarer2"
+  | "googlecloudstorage"
+  | "vercelblob"
+  // Communication
+  | "twilio"
+  | "vonage"
+  | "plivo"
+  // Other SaaS
+  | "notion"
+  | "airtable"
+  | "webflow"
+  | "memberstack"
+  | "outseta"
+  // Marketing & advertising
+  | "braze"
+  | "iterable"
+  | "vero";
 
 export const ALL_INTEGRATIONS: Integration[] = [
+  "stripe",
+  "mailchimp",
+  "hubspot",
+  "intercom",
+  "supabase",
+  "postgresql",
+  "salesforce",
+  "segment",
+  "klaviyo",
+  "sendgrid",
+  "auth0",
+  "clerk",
+  "posthog",
+  "zendesk",
+  "mixpanel",
+  "mysql",
+  "planetscale",
+  "neon",
+  "mongodb",
+  "firestore",
+  "convertkit",
+  "activecampaign",
+  "resend",
+  "drip",
+  "amplitude",
+  "fullstory",
+  "heap",
+  "june",
+  "paddle",
+  "chargebee",
+  "recurly",
+  "braintree",
+  "pipedrive",
+  "freshdesk",
+  "crisp",
+  "firebaseauth",
+  "okta",
+  "stytch",
+  "turso",
+  "redis",
+  "elasticsearch",
+  "cassandra",
+  "workos",
+  "passage",
+  "cognito",
+  "keycloak",
+  "brevo",
+  "omnisend",
+  "beehiiv",
+  "substack",
+  "loops",
+  "customerio",
+  "linear",
+  "helpscout",
+  "gorgias",
+  "groove",
+  "smartlook",
+  "logrocket",
+  "datadog",
+  "pendo",
+  "lemonsqueezy",
+  "gumroad",
+  "zuora",
+  "awss3",
+  "cloudflarer2",
+  "googlecloudstorage",
+  "vercelblob",
+  "twilio",
+  "vonage",
+  "plivo",
+  "notion",
+  "airtable",
+  "webflow",
+  "memberstack",
+  "outseta",
+  "braze",
+  "iterable",
+  "vero",
+] as const;
+
+/**
+ * Integrations with a real delete executor in this build
+ * (`lib/connectors/specs`). The remaining catalog entries are "coming soon":
+ * visible in the catalog behind the owner's availability flag, but with no
+ * executor yet — saving or running them returns a clear 403, never a hang.
+ * Keeping executors to these 6 is what keeps the bundle light (no aws-sdk,
+ * mongodb/cassandra drivers, etc.).
+ */
+export const LIVE_INTEGRATIONS: Integration[] = [
   "stripe",
   "mailchimp",
   "hubspot",
@@ -47,7 +233,7 @@ export interface PostgresqlCredentials {
   email_column: string;
 }
 
-export type ConnectorCredentialsMap = {
+type LiveCredentialsMap = {
   stripe: StripeCredentials;
   mailchimp: MailchimpCredentials;
   hubspot: HubSpotCredentials;
@@ -55,6 +241,16 @@ export type ConnectorCredentialsMap = {
   supabase: SupabaseTargetCredentials;
   postgresql: PostgresqlCredentials;
 };
+
+/** Credential shapes for the 72 catalog-only integrations (generic string map until their executors ship). */
+type CatalogCredentialsMap = {
+  [K in Exclude<
+    Integration,
+    "stripe" | "mailchimp" | "hubspot" | "intercom" | "supabase" | "postgresql"
+  >]: Record<string, string>;
+};
+
+export type ConnectorCredentialsMap = LiveCredentialsMap & CatalogCredentialsMap;
 
 export type AnyConnectorCredentials = ConnectorCredentialsMap[Integration];
 

@@ -9,6 +9,7 @@ interface SubRow {
   status: string;
   external_subscription_id: string | null;
   current_period_end: string | null;
+  trial_ends_at: string | null;
 }
 
 export default function SettingsPage() {
@@ -23,7 +24,7 @@ export default function SettingsPage() {
       const supabase = getSupabaseBrowser();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data } = await supabase.from("subscriptions").select("plan,status,external_subscription_id,current_period_end").eq("user_id", user.id).maybeSingle();
+      const { data } = await supabase.from("subscriptions").select("plan,status,external_subscription_id,current_period_end,trial_ends_at").eq("user_id", user.id).maybeSingle();
       if (data) setSub(data as SubRow);
       const { data: meter } = await supabase.from("usage_meters").select("deletion_count").eq("user_id", user.id).order("period_start", { ascending: false }).limit(1).maybeSingle();
       if (meter) {
@@ -97,6 +98,11 @@ export default function SettingsPage() {
       <h1 style={{ fontSize: 30, marginBottom: 6 }}>Settings & billing</h1>
       <p className="muted" style={{ marginBottom: 22, fontSize: 13.5 }}>Manage your plan, usage and account. <span className="badge badge-lime" style={{ verticalAlign: "middle" }}><span className="dot" />test mode</span> <span style={{ color: "var(--t3)" }}>· use Dodo test card 4242 4242 4242 4242</span></p>
       {flash && <div className={flash.ok ? "flash flash-ok" : "flash flash-error"}>{flash.msg}</div>}
+      {sub?.status === "trialing" && sub?.trial_ends_at && (
+        <div className="flash flash-ok">
+          🎉 Trial active — {Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} day(s) left on {PLANS[currentPlan as keyof typeof PLANS]?.label ?? currentPlan}. No card required.
+        </div>
+      )}
 
       <div className="card card-hover" style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>

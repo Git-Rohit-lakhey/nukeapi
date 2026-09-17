@@ -10,8 +10,8 @@ This is **v2** rebuilt from the failed v1 (`E:\Applications\nukeapi`). Same spec
 |---|---|
 | 22 deps (aws-sdk, gcs, vercel/blob, cassandra, mongodb, braintree, samlify) inflated bundle & cold-start | **12 deps** — `next`, `react`, `supabase`, `upstash/redis`, `bcryptjs`, `pdf-lib`, `resend`, `zod`, `server-only`, `pg` |
 | 16 migrations (010–016 for dormant features) never applied in prod | **9 migrations** exactly per spec §4 |
-| `lib/connectors/_archive` duplicate + 78-connector meta bloat | **6 connectors** (stripe, mailchimp, hubspot, intercom, supabase, postgresql) via declarative engine |
-| 1200-line `LandingPage.tsx` single client component | Split into `components/marketing/sections/*` (todo: flesh out) |
+| `lib/connectors/_archive` duplicate + 78-connector meta bloat | **78-entry catalog** in `meta.ts` (6 live executors + 72 coming-soon) with owner-controlled `connector_flags` (migration 010), no heavy drivers |
+| 1200-line `LandingPage.tsx` single client component | Slim `app/page.tsx` + `components/marketing/IntegrationsGrid.tsx` (28 → Show all 78 → Show less, ported from v1) |
 | Trial/custom/SSO paths assumed tables that didn't exist | Removed from v1 — re-add only when ROADMAP phase starts |
 | `buildUsageInfo` off-by-one, silent `profiles` email miss | Fixed to read *after* increment, no subtraction |
 
@@ -21,7 +21,7 @@ See `Universal Harness/DEEP_ANALYSIS.md` for the full audit.
 
 ```bash
 cp .env.local.example .env.local   # fill all values
-# apply supabase/migrations/ 001–009 to your Supabase project
+# apply supabase/migrations/ 001–011 to your Supabase project
 npm install        # use the light package.json (12 deps) on your machine
 npm run dev        # http://localhost:3000
 npm run typecheck  # 0 errors

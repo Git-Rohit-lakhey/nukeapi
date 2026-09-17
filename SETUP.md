@@ -23,7 +23,7 @@ All vars in `.env.local.example`. Critical (server-only, never client):
 
 ## 3. Database
 
-Apply `supabase/migrations/` 001→009 **in order** via Supabase SQL editor or CLI. They create tables, RLS, `increment_usage()` RPC, and `user_id_by_email()`.
+Apply `supabase/migrations/` 001→011 **in order** via Supabase SQL editor or CLI. They create tables, RLS, `increment_usage()` RPC, `user_id_by_email()`, the owner-controlled `connector_flags` table (010: 6 live + 72 catalog), and trial support (011: `trialing` status + `trial_ends_at`).
 
 ## 4. Develop
 

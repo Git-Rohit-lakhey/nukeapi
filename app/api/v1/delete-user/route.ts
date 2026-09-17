@@ -4,7 +4,8 @@ import { authenticateRequest } from "@/lib/auth/middleware";
 import { rateLimit } from "@/lib/engine/ratelimit";
 import { checkPlanLimit, incrementUsage, getPlanForUser, buildUsageInfo } from "@/lib/engine/metering";
 import { runDeletion } from "@/lib/engine/orchestrator";
-import { getConnector, REGISTERED_INTEGRATIONS } from "@/lib/connectors/index";
+import { getConnector, isCatalogIntegration, isRegisteredIntegration, REGISTERED_INTEGRATIONS } from "@/lib/connectors/index";
+import { getUsableIntegrationSet } from "@/lib/connectors/flags";
 import { isIntegrationAllowed } from "@/lib/constants/compliance";
 import { signAudit } from "@/lib/security/signing";
 import { updateDeletionRequest } from "@/lib/audit/logger";
@@ -55,13 +56,43 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Owner availability gate (defense in depth): the default set and every
+  // explicit request are intersected with the live connector_flags state.
+  const usableSet = await getUsableIntegrationSet();
+
   const requested: Integration[] = (
     body.integrations && body.integrations.length
       ? body.integrations
-      : REGISTERED_INTEGRATIONS.filter((i) => isIntegrationAllowed(plan, i as Integration))
+      : REGISTERED_INTEGRATIONS.filter(
+          (i) => usableSet.has(i) && isIntegrationAllowed(plan, i as Integration),
+        )
   ) as Integration[];
 
-  const disallowed = requested.filter((i) => !getConnector(i as string) || !isIntegrationAllowed(plan, i));
+  const unknown = requested.filter((i) => !isCatalogIntegration(i as string));
+  if (unknown.length > 0) {
+    return NextResponse.json(
+      { success: false, error: { code: "INVALID_INTEGRATION", message: `Unknown integration(s): ${unknown.join(", ")}` } } satisfies DeleteUserResponse,
+      { status: 400 },
+    );
+  }
+
+  const disabled = requested.filter((i) => !usableSet.has(i as string));
+  if (disabled.length > 0) {
+    return NextResponse.json(
+      { success: false, error: { code: "CONNECTOR_DISABLED", message: `Disabled by the administrator: ${disabled.join(", ")}` } } satisfies DeleteUserResponse,
+      { status: 403 },
+    );
+  }
+
+  const notLiveYet = requested.filter((i) => !isRegisteredIntegration(i as string) || !getConnector(i as string));
+  if (notLiveYet.length > 0) {
+    return NextResponse.json(
+      { success: false, error: { code: "CONNECTOR_NOT_LIVE_YET", message: `On the roadmap but not live yet: ${notLiveYet.join(", ")}` } } satisfies DeleteUserResponse,
+      { status: 403 },
+    );
+  }
+
+  const disallowed = requested.filter((i) => !isIntegrationAllowed(plan, i));
   if (disallowed.length > 0) {
     return NextResponse.json(
       { success: false, error: { code: "INTEGRATION_NOT_ALLOWED", message: `Plan '${plan}' does not allow: ${disallowed.join(", ")}` } } satisfies DeleteUserResponse,
@@ -114,7 +145,7 @@ export async function POST(req: NextRequest) {
   }
   const requestId = inserted.id;
 
-  const result = await runDeletion({ userId: apiKey.user_id, email, integrations: requested, requestId, startedAt });
+  const result = await runDeletion({ userId: apiKey.user_id, email, integrations: requested, requestId, startedAt, enabledSet: usableSet });
 
   const auditSubject: AuditSubject = {
     requestId,

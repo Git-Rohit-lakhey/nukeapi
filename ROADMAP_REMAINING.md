@@ -10,18 +10,18 @@
 
 **Why first:** No homepage = no conversions. This is the money page. Also unblocks Vercel deploy preview.
 
-- [ ] **7a. Homepage** (`app/page.tsx`): hero (trust badge, lime CTA), code tabs (curl/node/python), integrations grid (6 cards from `CONNECTOR_META`), compliance table (`LEGAL`), pricing grid (`PLANS` from `compliance.ts`), ROI math, FAQ, footer. Extracted from `E:\Applications\nukeapi\components\marketing\LandingPage.tsx` but trimmed to 6 integrations and split into `components/marketing/sections/*`. Exit: `FREE_INTEGRATIONS` matches code example, pricing numbers appear, CTA goes to `/signup`.
-- [ ] **7b. Docs** (`app/docs/page.tsx`): code examples for 6 integrations, error table, rate-limit note.
-- [ ] **7c. Legal** (`app/terms|privacy|dpa|refund`): render from `LEGAL` + `SUB_PROCESSORS` (single source) so Terms ↔ DPA never drift.
-- [ ] **7d. Status** (`app/status/page.tsx` + `app/api/status`): live pings to `/api/health`.
-- [ ] **7e. Blog** (`app/blog`): 1 post "How to Handle GDPR Erasure Automatically".
+- [x] **7a. Homepage** (`app/page.tsx` + `components/marketing/IntegrationsGrid.tsx`): hero (trust badge, lime CTA), code tabs (curl/node/python), integrations catalog (78 pills from `CONNECTOR_META`, 28 collapsed + Show all 78 / Show less, live lime / maint amber / soon grey driven by `/api/connectors/availability`), compliance table (`LEGAL`), pricing grid (`PLANS` from `compliance.ts`), ROI math, FAQ, footer. Ported from v1 `LandingPage.tsx` UX without the 1200-line monolith.
+- [x] **7b. Docs** (`app/docs/page.tsx`): 8-lang code tabs, Available Integrations table with Live/Maintenance/Coming-soon status from flags, error table (incl. CONNECTOR_DISABLED), rate-limit note. ISR 5 min so status tracks owner toggles.
+- [x] **7c. Legal** (`app/terms|privacy|dpa|refund`): render from `LEGAL` + `SUB_PROCESSORS` (single source) so Terms ↔ DPA never drift.
+- [x] **7d. Status** (`app/status/page.tsx` + `app/api/status`): live pings, 30s poll, OPERATIONAL/DEGRADED.
+- [x] **7e. Blog** (`app/blog` + `app/blog/[slug]`): index + full post page "How to Handle GDPR Erasure Automatically" with metadata + CTA.
 
 **Exit:** Homepage Lighthouse >90, pricing/legal figures match `compliance.ts`, `npm run build` still green.
 
 ## Phase 8 — Auth (signup / login / reset) — half day
 
-- [ ] Wire Supabase SSR: `lib/db/supabase.ts` already lazy, `lib/db/browser.ts` done. Build `(auth)/login`, `signup`, `reset-password`, `update-password` using `supabase.auth` + `getSessionUser`. Match `nukeapi` auth pages (dark/lime). Add `app/auth/callback/route.ts` for email confirm.
-- [ ] Guard `(dashboard)/layout.tsx`: redirect unauth → `/login`.
+- [x] Auth done: `(auth)/login` (incl. `?plan`/`trial` intent → `POST /api/v1/trial/start`), `signup` (persists `pending_trial` across email confirm), `reset-password`, `update-password` using `supabase.auth` + `getSessionUser`. `app/auth/callback/route.ts` exchanges code for session.
+- [x] Guard `(dashboard)/layout.tsx`: redirect unauth → `/login`.
 
 **Exit:** Manual signup → confirm email → login → hit `/dashboard` (no redirect).
 
@@ -29,24 +29,24 @@
 
 This is where users **pay**. Get this wrong and Dodo never sees a checkout.
 
-- [ ] **9a. Connectors** (`(dashboard)/connectors`): list 6 cards from `CONNECTOR_META`, form per field, `POST /api/v1/connectors/save` (already AES-256 encrypted server-side). Show "connected ✓" vs "connect". Validate identifiers for `postgresql`.
-- [ ] **9b. API Keys** (`(dashboard)/keys`): `POST /api/v1/keys/create` (raw shown once), list + revoke, copy button.
-- [ ] **9c. Requests** (`(dashboard)/requests`): `deletion_requests` + `audit_logs` table, status badge, duration, PDF download button (`/api/requests/[id]/pdf`).
-- [ ] **9d. Settings / Billing** (`(dashboard)/settings`): **THIS IS MONETIZATION**. Show current plan (`getPlanForUser`), usage meter (`usage_meters` vs `PLANS[plan].includedDeletions`), pricing upgrade cards, `POST /api/checkout` → redirect to `checkoutUrl`, `POST /api/v1/subscription/cancel` (calls Dodo first, then local — §6.12), `POST /api/v1/account/delete`.
-- [ ] **9e. Support** (`(dashboard)/support`): `POST /api/feedback` via Resend.
-- [ ] **9f. Owner** (`(dashboard)/owner`): email-allowlisted (`OWNER_EMAILS`), show MRR via `subscriptions` count.
+- [x] **9a. Connectors** (`(dashboard)/connectors`): live-executor cards from `CONNECTOR_META` ∩ `LIVE_INTEGRATIONS`, form per field, `POST /api/v1/connectors/save` (AES-256 encrypted server-side + owner `CONNECTOR_DISABLED` / `CONNECTOR_NOT_LIVE_YET` gates). "Coming soon" section lists the other 72. Validate identifiers for `postgresql`.
+- [x] **9b. API Keys** (`(dashboard)/keys`): `POST /api/v1/keys/create` (raw shown once), list + revoke, copy button.
+- [x] **9c. Requests** (`(dashboard)/requests`): `deletion_requests` + `audit_logs` table, status badge, duration, PDF download button (`/api/requests/[id]/pdf`).
+- [x] **9d. Settings / Billing** (`(dashboard)/settings`): plan badge + trial countdown banner, usage meter, pricing upgrade cards, `POST /api/checkout` → `checkoutUrl`, `POST /api/v1/subscription/cancel` (Dodo first, then local), `POST /api/v1/account/delete`. Trial: `POST /api/v1/trial/start` (14d, no card) + trial-aware `getPlanForUser` (expired → auto-downgrade to free).
+- [x] **9e. Support** (`(dashboard)/support`): `POST /api/feedback` via Resend.
+- [x] **9f. Owner** (`(dashboard)/owner`): email-allowlisted (`OWNER_EMAILS`), MRR via `subscriptions` count, plus `OwnerConnectors` kill-switches (Live/Hidden + Maintenance per connector, audited to `admin_audit`) backed by migration `010_connector_flags` + `GET/PATCH /api/admin/connectors`.
 
 **Exit:** New user can sign up → connect Stripe → create key → `curl` delete with that key → see request in dashboard → click "Upgrade to Startup $99" → landed on Dodo test checkout.
 
 ## Phase 10 — PDF Audit Download — half day
 
-- [ ] **10a.** `lib/audit/pdf.ts` already does HMAC footer. Add `app/api/requests/[id]/pdf/route.ts` (session-auth, owns request, streams `application/pdf` via `pdf-lib`).
+- [x] **10a.** `app/api/requests/[id]/pdf/route.ts` (session-auth, owns request, Startup+ plan-gated, streams `application/pdf` via `pdf-lib` with HMAC footer).
 
 **Exit:** After a delete, `GET /api/requests/{id}/pdf` returns PDF whose footer `auditSignature` verifies via `verifyAudit`.
 
 ## Phase 11 — Supabase Migration Verification — 2 hours
 
-- Already verified: live Supabase has all 9 tables + `increment_usage` + `user_id_by_email`. But **re-run idempotently**: `psql` or Supabase SQL editor → paste `supabase/migrations/001–009` sequentially (they are `IF NOT EXISTS` + `CREATE OR REPLACE`). Confirm no errors.
+- Verified live (read-only, 2026-09-17): all 11 tables exist (`api_keys`, `deletion_requests`, `audit_logs`, `connector_credentials`, `feedback`, `keepalive_log`, `subscriptions`, `usage_meters`, `connector_flags`, `admin_audit`, `custom_connector_grants`), `subscriptions.trial_ends_at` column exists, `connector_flags` seeded with 78 rows. **If rebuilding a fresh project:** apply `supabase/migrations/001–011` sequentially (all idempotent). **Do NOT re-paste 010/011 over live data** — seeds are `ON CONFLICT DO NOTHING` but re-running resets nothing; safe either way.
 - **Rollback plan:** migrations are additive; no destructive `DROP`.
 
 **Exit:** `select * from pg_tables where schemaname='public'` shows 9 expected tables; `select proname from pg_proc where proname in ('increment_usage','user_id_by_email')` → 2 rows.

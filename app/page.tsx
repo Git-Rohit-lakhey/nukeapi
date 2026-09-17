@@ -1,7 +1,7 @@
 ﻿import Link from "next/link";
 import { SiteNav, SiteFooter } from "@/components/marketing/SiteNav";
 import PricingGrid from "@/components/marketing/PricingGrid";
-import { CONNECTOR_META } from "@/lib/connectors/meta";
+import IntegrationsGrid from "@/components/marketing/IntegrationsGrid";
 import { LEGAL } from "@/lib/constants/compliance";
 
 const LIME = "#c8f135";
@@ -23,14 +23,13 @@ const FEATURES = [
 ] as const;
 
 const FAQS = [
-  ["How fast can I go live?", "About 15 minutes: sign up, connect one integration, create a key, send your first POST. The docs page has copy-paste curl for all 6 integrations."],
+  ["How fast can I go live?", "About 15 minutes: sign up, connect one integration, create a key, send your first POST. The docs page has copy-paste curl for every live integration."],
   ["What happens if one integration fails?", "You get HTTP 207 partial with per-integration status. Stripe can succeed while HubSpot fails — nothing is silently dropped, and usage still counts the attempt."],
   ["How does billing work?", "Checkout is via Dodo Payments. The webhook upgrades your plan automatically. Cancel anytime — we call Dodo's API first, then mark you cancelled. Test mode uses card 4242 4242 4242 4242."],
   ["Is my data encrypted?", "Yes. Connector credentials are AES-256-GCM envelopes {v,iv,tag,data}. API keys are bcrypt hashes. Audit rows are HMAC-signed."],
 ] as const;
 
 export default function Home() {
-  const integrations = Object.values(CONNECTOR_META);
   const codeExample = `curl -X POST https://api.nukeapi.dev/v1/delete-user \\
   -H "Authorization: Bearer nk_live_••••••••" \\
   -H "Content-Type: application/json" \\
@@ -64,7 +63,7 @@ export default function Home() {
             </div>
             <p style={{ fontSize: 12, color: "#3a3a44", marginBottom: 32 }}>Free Sandbox · 20 deletions/mo · no credit card</p>
             <div style={{ display: "flex", gap: 36, flexWrap: "wrap", borderTop: "1px solid #15151a", paddingTop: 24 }}>
-              {[["<50ms", "avg response"], ["6", "integrations"], ["207/429", "honest statuses"]].map(([v, l]) => (
+                {[["<50ms", "avg response"], ["78", "integrations"], ["207/429", "honest statuses"]].map(([v, l]) => (
                 <div key={l}><div style={{ fontSize: "1.4rem", fontWeight: 800, color: LIME, letterSpacing: "-.02em" }}>{v}</div><div style={{ fontSize: 11, color: "#3d3d48", letterSpacing: ".07em", textTransform: "uppercase", marginTop: 4 }}>{l}</div></div>
               ))}
             </div>
@@ -122,23 +121,7 @@ export default function Home() {
 
       {/* INTEGRATIONS */}
       <section id="integrations" style={{ padding: "88px 6%", borderTop: "1px solid #121218" }}>
-        <div style={{ maxWidth: 1080, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ fontSize: 12, color: LIME, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 12 }}>Integrations</div>
-          <h2 style={{ fontSize: "clamp(1.8rem,3vw,2.4rem)", fontWeight: 800, letterSpacing: "-.03em", marginBottom: 10, color: "#fff" }}>Covers your stack</h2>
-          <p style={{ fontSize: 14, color: "#55555f", marginBottom: 32 }}>{integrations.length} connectors on one declarative engine — add one without a new code path</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, textAlign: "left" }} className="g3">
-            {integrations.map((m) => (
-              <div key={m.key} className="card card-hover" style={{ padding: 18, display: "flex", gap: 14, alignItems: "flex-start" }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: `${LIME}12`, border: `1px solid ${LIME}30`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: LIME, flexShrink: 0 }}>{m.label[0]}</div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>{m.label} <span style={{ fontSize: 10.5, padding: "2px 7px", borderRadius: 4, background: `${LIME}18`, color: LIME, letterSpacing: ".06em", marginLeft: 6, verticalAlign: "middle" }}>{m.tag.toUpperCase()}</span></div>
-                  <div style={{ fontSize: 12.5, color: "#55555f", marginTop: 4 }}>{m.required.length} credential field{m.required.length === 1 ? "" : "s"} · encrypted at rest</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p style={{ fontSize: 13, color: "#3d3d48", marginTop: 20 }}>Need another system? <a href="mailto:hello@nukeapi.dev" style={{ color: LIME }}>Request it →</a></p>
-        </div>
+        <IntegrationsGrid />
       </section>
 
       {/* PRICING */}

@@ -9,6 +9,9 @@ export const metadata = {
   alternates: { canonical: 'https://nukeapi.dev/docs' },
 }
 
+/** Revalidate often so the integration Status column tracks owner toggles. */
+export const revalidate = 300;
+
 const ENDPOINTS = [
   {
     method: 'POST',

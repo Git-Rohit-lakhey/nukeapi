@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser, getSupabaseAdmin } from "@/lib/db/supabase";
 import { encryptJSON } from "@/lib/security/crypto";
 import { errorResponse, withErrorHandler } from "@/lib/engine/errors";
-import { isRegisteredIntegration } from "@/lib/connectors/index";
+import { isCatalogIntegration, isRegisteredIntegration } from "@/lib/connectors/index";
 import { CONNECTOR_META } from "@/lib/connectors/meta";
+import { getUsableIntegrationSet } from "@/lib/connectors/flags";
 import { validateSqlIdentifier } from "@/lib/connectors/engine/sql";
 import { getPlanForUser } from "@/lib/engine/metering";
 import { getMaxIntegrations, isIntegrationAllowed } from "@/lib/constants/compliance";
@@ -21,8 +22,27 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const integration = (body.integration ?? "").trim();
   const creds = body.credentials ?? {};
 
-  if (!isRegisteredIntegration(integration)) {
+  if (!isCatalogIntegration(integration)) {
     return errorResponse("INVALID_INTEGRATION", `Unknown integration: ${integration}`, 400);
+  }
+
+  // Owner availability gate: disabled/hidden/maintenance connectors cannot be connected.
+  const usableSet = await getUsableIntegrationSet();
+  if (!usableSet.has(integration)) {
+    return errorResponse(
+      "CONNECTOR_DISABLED",
+      `"${integration}" is currently disabled by the administrator`,
+      403,
+    );
+  }
+
+  // Catalog-only ("coming soon") connectors have no delete executor yet.
+  if (!isRegisteredIntegration(integration)) {
+    return errorResponse(
+      "CONNECTOR_NOT_LIVE_YET",
+      `"${integration}" is on the roadmap but has no live delete executor yet — request it at hello@nukeapi.dev`,
+      403,
+    );
   }
 
   const required = CONNECTOR_META[integration as Integration].required ?? [];
