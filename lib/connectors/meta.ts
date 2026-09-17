@@ -12,10 +12,10 @@ import type { Integration } from "@/types/connector";
  * real source of truth for whether a connector is usable.
  *
  * v2 note: all 78 entries are catalogued here (marketing, docs, dashboard,
- * admin gating), but only the 6 core entries have delete executors in
- * `lib/connectors/specs`. The other 72 are "coming soon" — the owner can
- * preview them, but saves/runs are rejected with a clear 403 until their
- * executor ships. This split is what keeps the bundle light.
+ * admin gating) AND all 78 ship a real delete executor in
+ * `lib/connectors/specs` (pure-HTTPS specs need no extra dependency; driver
+ * / SDK executors lazy-load inside run()). The owner's `connector_flags`
+ * state is the only gate between a customer and an executor.
  */
 export interface ConnectorFieldDef {
   name: string;
@@ -83,15 +83,16 @@ export const CONNECTOR_META: Record<Integration, ConnectorMeta> = {
   },
   supabase: {
     key: "supabase",
-    label: "Supabase (your project)",
+    label: "Supabase",
     tag: "Database",
     category: "Database",
+    enabledByDefault: true,
+    note: "Connects to your own Supabase project — deletes the auth user via your service-role key.",
     fields: [
       { name: "project_url", label: "Project URL", placeholder: "https://xxxx.supabase.co" },
       { name: "service_role_key", label: "Service role key", placeholder: "ey...", secret: true },
     ],
     required: ["project_url", "service_role_key"],
-    enabledByDefault: true,
   },
   postgresql: {
     key: "postgresql",

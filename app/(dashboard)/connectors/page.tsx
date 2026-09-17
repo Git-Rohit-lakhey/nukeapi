@@ -161,6 +161,7 @@ export default function ConnectorsPage() {
           </div>
         </form>
       )}
+      {soonCards.length > 0 && (
       <details style={{ marginTop: 20 }} className="card">
         <summary style={{ cursor: "pointer", fontWeight: 700, fontSize: 14 }}>
           Coming soon — {soonCards.length} more on the roadmap
@@ -187,6 +188,7 @@ export default function ConnectorsPage() {
           ))}
         </div>
       </details>
+      )}
     </div>
   );
 }

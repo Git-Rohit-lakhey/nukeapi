@@ -180,20 +180,13 @@ export const ALL_INTEGRATIONS: Integration[] = [
 
 /**
  * Integrations with a real delete executor in this build
- * (`lib/connectors/specs`). The remaining catalog entries are "coming soon":
- * visible in the catalog behind the owner's availability flag, but with no
- * executor yet — saving or running them returns a clear 403, never a hang.
- * Keeping executors to these 6 is what keeps the bundle light (no aws-sdk,
- * mongodb/cassandra drivers, etc.).
+ * (`lib/connectors/specs`). All 78 catalog entries ship an executor —
+ * HTTP/SaaS APIs run on fetch, SQL targets on pg/mysql2/libsql, and the rest
+ * on their official SDKs (dynamically imported inside run(), so an unused
+ * SDK never costs startup time or client bytes). Owner availability
+ * (`connector_flags`) is the only gate between a customer and an executor.
  */
-export const LIVE_INTEGRATIONS: Integration[] = [
-  "stripe",
-  "mailchimp",
-  "hubspot",
-  "intercom",
-  "supabase",
-  "postgresql",
-] as const;
+export const LIVE_INTEGRATIONS: Integration[] = [...ALL_INTEGRATIONS];
 
 export type ConnectorStatus = "success" | "failed" | "skipped";
 

@@ -160,6 +160,59 @@ export default function Home() {
         </div>
       </section>
 
+      {/* WHY IT MATTERS */}
+      <section style={{ padding: "88px 6%", background: "#080809", borderTop: "1px solid #121218" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <div style={{ fontSize: 12, color: LIME, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 12, textAlign: "center" }}>Why it matters</div>
+          <h2 style={{ fontSize: "clamp(1.8rem,3vw,2.4rem)", fontWeight: 800, letterSpacing: "-.03em", marginBottom: 10, textAlign: "center", color: "#fff" }}>One missed deletion request can cost more than your stack</h2>
+          <p style={{ fontSize: 14, color: "#55555f", textAlign: "center", maxWidth: 640, margin: "0 auto 36px", lineHeight: 1.8 }}>
+            Every product with user accounts receives erasure requests — GDPR Article 17, CCPA deletion rights, LGPD confirmation requests.
+            Each one starts a legal clock, and the data lives scattered across your payments, CRM, email, auth and database systems.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }} className="g3">
+            <div className="card card-hover" style={{ padding: 24 }}>
+              <div style={{ fontSize: 22, marginBottom: 12 }}>⏱️</div>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: "#fff" }}>The clock</div>
+              <div style={{ fontSize: 13, color: "#5c5c68", lineHeight: 1.8 }}>
+                {LEGAL.gdpr.responseDeadlineDays} days under GDPR, {LEGAL.ccpa.responseDeadlineDays} under CCPA/CPRA, {LEGAL.lgpd.responseDeadlineDays} under LGPD.
+                A manual runbook across 5+ dashboards rarely finishes in time — and &quot;we couldn&apos;t find them&quot; is not a defence.
+              </div>
+            </div>
+            <div className="card card-hover" style={{ padding: 24 }}>
+              <div style={{ fontSize: 22, marginBottom: 12 }}>⚖️</div>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: "#fff" }}>The penalty</div>
+              <div style={{ fontSize: 13, color: "#5c5c68", lineHeight: 1.8 }}>
+                {LEGAL.gdpr.maxPenalty} · {LEGAL.ccpa.maxPenalty} · {LEGAL.lgpd.maxPenalty}.
+                Beyond fines: processing orders, lawsuits, and customers who leave after a breach of trust.
+              </div>
+            </div>
+            <div className="card card-hover" style={{ padding: 24 }}>
+              <div style={{ fontSize: 22, marginBottom: 12 }}>🤖</div>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: "#fff" }}>The automation dividend</div>
+              <div style={{ fontSize: 13, color: "#5c5c68", lineHeight: 1.8 }}>
+                Connect each system once. Afterwards one API call fans out in parallel with timeout plus retry,
+                and returns an HMAC-signed PDF your lawyers can file. No runbooks, no dashboard-hopping, no spreadsheet tracking.
+              </div>
+            </div>
+          </div>
+          <div className="card g3" style={{ marginTop: 16, padding: 24, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }} >
+            {[
+              ["Connect in minutes", "Paste API keys in the dashboard. AES-256 encrypted at rest, never in your codebase."],
+              ["One POST per request", "Send the user email. Every live integration runs at once; partial results stay honest (HTTP 207)."],
+              ["File the proof", "Each run produces a signed audit PDF — deletion evidence on demand, not a scramble."],
+            ].map(([t, d]) => (
+              <div key={t}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: LIME, marginBottom: 6 }}>{t}</div>
+                <div style={{ fontSize: 13, color: "#5c5c68", lineHeight: 1.75 }}>{d}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: 13, color: "#3d3d48", marginTop: 20, textAlign: "center" }}>
+            Developer-friendly by design: copy-paste curl, Node and Python examples in <Link href="/docs" style={{ color: LIME }}>the docs</Link> — most teams integrate in an afternoon.
+          </p>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section style={{ padding: "88px 6%", background: "#080809", borderTop: "1px solid #121218" }}>
         <div style={{ maxWidth: 760, margin: "0 auto" }}>

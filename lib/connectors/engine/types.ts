@@ -100,9 +100,10 @@ export interface SqlSpec {
   key: Integration;
   transport: "sql";
   label: string;
-  /** v2 ships "pg" only. Do NOT add a driver without adding its package to package.json. */
-  driver: "pg";
+  driver: "pg" | "mysql" | "libsql";
   connectionStringField: string;
+  /** For libsql (Turso) — the auth token credential field. */
+  authTokenField?: string;
   tableField: string;
   columnField: string;
   /** SQL placeholder style. Default "$1" (pg). */

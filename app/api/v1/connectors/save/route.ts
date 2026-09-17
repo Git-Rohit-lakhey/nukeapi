@@ -52,7 +52,11 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     }
   }
 
-  if (integration === "postgresql") {
+  // Extra validation for SQL-family identifiers before we even store them.
+  // Any connector whose credentials carry table_name + email_column
+  // (postgresql, mysql, planetscale, neon, turso, cassandra) gets its
+  // identifiers checked against the strict allowlist (§6.14).
+  if (typeof creds.table_name === "string" && typeof creds.email_column === "string") {
     if (!validateSqlIdentifier(creds.table_name) || !validateSqlIdentifier(creds.email_column)) {
       return errorResponse("INVALID_IDENTIFIER", "table_name and email_column must be valid SQL identifiers", 400);
     }
